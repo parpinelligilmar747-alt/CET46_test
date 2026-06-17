@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>storage</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #EFF5F1;
+      --bg-paper: #F8FBF9;
+      --surface: #FFFFFF;
+      --ink: #1A2C26;
+      --ink-2: #3B4F48;
+      --ink-3: #6C7D76;
+      --line: #DAE7E0;
+      --line-strong: #B8D0C5;
+      --accent: #0E8C6D;
+      --accent-dark: #0A6E55;
+      --shadow-1: 0 1px 2px rgba(26,44,38,.04), 0 4px 16px rgba(26,44,38,.06);
+      --shadow-2: 0 8px 32px rgba(26,44,38,.10);
+      --font-serif: "Noto Serif SC", "Songti SC", "STSong", serif;
+      --font-sans: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+      --font-display: "Fraunces", "Noto Serif SC", serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      background-image:
+        radial-gradient(circle at 20% 10%, rgba(14,140,109,.05), transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(22,101,79,.05), transparent 50%);
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+      opacity: .035;
+      mix-blend-mode: multiply;
+    }
+    .hidden { display: none !important; }
+    .login-wrap {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      position: relative;
+      z-index: 1;
+    }
+    .login-card {
+      width: min(460px, 100%);
+      background: rgba(248,251,249,.92);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow-2);
+      padding: 32px;
+    }
+    .eyebrow {
+      font-family: var(--font-display);
+      color: var(--accent);
+      letter-spacing: .24em;
+      font-size: 12px;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .login-title {
+      font-family: var(--font-serif);
+      font-size: 34px;
+      line-height: 1.15;
+      margin-bottom: 12px;
+      font-weight: 900;
+    }
+    .login-sub {
+      color: var(--ink-2);
+      font-size: 15px;
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+    .field { margin-bottom: 16px; }
+    .field label {
+      display: block;
+      font-size: 14px;
+      color: var(--ink-2);
+      margin-bottom: 8px;
+    }
+    .field input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1.5px solid var(--line);
+      background: var(--surface);
+      color: var(--ink);
+      font-size: 15px;
+      outline: none;
+    }
+    .field input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(14,140,109,.12);
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: var(--ink);
+      color: var(--bg-paper);
+      border: none;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all .25s ease;
+    }
+    .btn:hover { background: var(--accent); transform: translateY(-1px); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--ink-2);
+      border: 1px solid var(--line-strong);
+    }
+    .login-msg {
+      min-height: 22px;
+      margin-top: 12px;
+      font-size: 13px;
+      color: #B14A3B;
+    }
+    .shell {
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 28px 20px 44px;
+      position: relative;
+      z-index: 1;
+    }
+    .topbar {
+      display: grid;
+      grid-template-columns: 1.3fr .9fr;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+    .hero, .control, .metric, .panel, .table-card {
+      background: rgba(248,251,249,.94);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow-1);
+    }
+    .hero { padding: 28px; }
+    .hero h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(30px, 4vw, 44px);
+      line-height: 1.1;
+      margin-bottom: 10px;
+      font-weight: 900;
+    }
+    .hero p, .control p {
+      color: var(--ink-2);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    .control {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      justify-content: space-between;
+    }
+    .control h2 {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .button-row, .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 14px;
+    }
+    .meta-row {
+      color: var(--ink-3);
+      font-size: 12px;
+      letter-spacing: .04em;
+    }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+    .metric { padding: 22px; }
+    .metric-label {
+      color: var(--ink-3);
+      font-size: 12px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-family: var(--font-display);
+      margin-bottom: 10px;
+    }
+    .metric-value {
+      color: var(--accent);
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+    .metric-hint {
+      color: var(--ink-2);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+    .panel {
+      padding: 20px;
+      min-height: 340px;
+    }
+    .panel h3 {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+    .panel p {
+      color: var(--ink-3);
+      font-size: 13px;
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+    .col-4 { grid-column: span 4; }
+    .col-5 { grid-column: span 5; }
+    .col-6 { grid-column: span 6; }
+    .col-7 { grid-column: span 7; }
+    .col-8 { grid-column: span 8; }
+    .col-12 { grid-column: span 12; }
+    canvas {
+      width: 100% !important;
+      height: 250px !important;
+    }
+    .empty {
+      min-height: 210px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: var(--ink-3);
+      border: 1px dashed var(--line-strong);
+      border-radius: 14px;
+      background: var(--bg-paper);
+      padding: 20px;
+    }
+    .insights {
+      display: grid;
+      gap: 10px;
+    }
+    .insight {
+      background: rgba(14,140,109,.08);
+      border: 1px solid rgba(14,140,109,.14);
+      border-radius: 14px;
+      padding: 14px 15px;
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--ink-2);
+    }
+    .table-card {
+      overflow: hidden;
+      padding: 18px;
+    }
+    .table-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .table-head h3 {
+      font-family: var(--font-serif);
+      font-size: 20px;
+    }
+    .table-scroll {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface);
+    }
+    table {
+      width: 100%;
+      min-width: 1160px;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+      line-height: 1.65;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: var(--bg-paper);
+    }
+    .tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(14,140,109,.08);
+      color: var(--accent-dark);
+      font-size: 12px;
+      margin: 2px 6px 2px 0;
+    }
+    @media (max-width: 980px) {
+      .topbar, .metrics { grid-template-columns: 1fr 1fr; }
+      .col-4, .col-5, .col-6, .col-7, .col-8, .col-12 { grid-column: span 12; }
+    }
+    @media (max-width: 720px) {
+      .topbar, .metrics { grid-template-columns: 1fr; }
+      .login-card, .hero, .control, .metric, .panel, .table-card { border-radius: 18px; }
+      .button-row .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <section class="login-wrap" id="loginView">
+    <div class="login-card">
+      <div class="eyebrow">Storage Access</div>
+      <h1 class="login-title">测评数据看板后台</h1>
+      <p class="login-sub">输入账号和密码后进入数据看板。未登录状态下无法查看参与测评者的数据。</p>
+      <div class="field">
+        <label for="username">账号</label>
+        <input id="username" type="text" autocomplete="username" />
+      </div>
+      <div class="field">
+        <label for="password">密码</label>
+        <input id="password" type="password" autocomplete="current-password" />
+      </div>
+      <button class="btn" type="button" id="loginBtn">进入数据看板</button>
+      <div class="login-msg" id="loginMsg"></div>
+    </div>
+  </section>
+
+  <main class="shell hidden" id="dashboardView">
+    <section class="topbar" id="dashboardCapture">
+      <div class="hero">
+        <h1>测评数据看板</h1>
+        <p>按原测评题目口径汇总，查看参与测评的人群画像、目标分布、基础分层、能力短板与备考方式。</p>
+      </div>
+      <div class="control">
+        <div>
+          <h2>数据操作</h2>
+          <p>支持手动刷新、自动刷新和 PDF 导出。整个后台独立于前台测评页，仅登录后可见。</p>
+        </div>
+        <div class="button-row">
+          <button class="btn" type="button" id="refreshBtn">刷新数据</button>
+          <button class="btn btn-ghost" type="button" id="toggleBtn">关闭自动刷新</button>
+          <button class="btn btn-ghost" type="button" id="pdfBtn">导出 PDF</button>
+        </div>
+        <div class="meta-row">
+          <span id="updatedAt">最近刷新：尚未加载</span>
+          <span id="autoState">自动刷新：每 60 秒</span>
+          <span id="sampleCount">样本数：0</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="metrics">
+      <div class="metric">
+        <div class="metric-label">样本总量</div>
+        <div class="metric-value" id="metricTotal">0</div>
+        <div class="metric-hint">当前累计参与测评的人数</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">主力年级</div>
+        <div class="metric-value" id="metricGrade">-</div>
+        <div class="metric-hint" id="metricGradeHint">等待数据</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">最集中目标</div>
+        <div class="metric-value" id="metricGoal">-</div>
+        <div class="metric-hint" id="metricGoalHint">等待数据</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">高频短板</div>
+        <div class="metric-value" id="metricIssue">-</div>
+        <div class="metric-hint" id="metricIssueHint">等待数据</div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="panel col-7">
+        <h3>年级分布</h3>
+        <p>查看参与测评的主体处在哪个大学阶段。</p>
+        <canvas id="chartGrade"></canvas>
+      </div>
+      <div class="panel col-5">
+        <h3>目标占比</h3>
+        <p>查看大家最关注的是过线、冲分还是高分目标。</p>
+        <canvas id="chartGoal"></canvas>
+      </div>
+      <div class="panel col-6">
+        <h3>基础分层</h3>
+        <p>按高考英语基础汇总当前样本起点。</p>
+        <canvas id="chartBase"></canvas>
+      </div>
+      <div class="panel col-6">
+        <h3>考试时间分布</h3>
+        <p>按剩余天数划分当前人群备考紧迫度。</p>
+        <canvas id="chartTime"></canvas>
+      </div>
+      <div class="panel col-8">
+        <h3>能力短板总览</h3>
+        <p>听力根因、阅读障碍、写作手感统一汇总。</p>
+        <canvas id="chartIssue"></canvas>
+      </div>
+      <div class="panel col-4">
+        <h3>摘要</h3>
+        <p>快速判断现在来参与测评的是怎样一群学生。</p>
+        <div class="insights" id="insights"></div>
+      </div>
+      <div class="panel col-12">
+        <h3>当前备考方式</h3>
+        <p>多选题累计次数统计，更接近真实学习习惯。</p>
+        <canvas id="chartMethod"></canvas>
+      </div>
+    </section>
+
+    <section class="table-card">
+      <div class="table-head">
+        <h3>填写明细</h3>
+        <span style="color:var(--ink-3);font-size:12px;">按题目原口径展示</span>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>提交时间</th>
+              <th>考试</th>
+              <th>目标</th>
+              <th>天数</th>
+              <th>基础</th>
+              <th>年级</th>
+              <th>最近成绩</th>
+              <th>听力体感</th>
+              <th>听力根因</th>
+              <th>阅读障碍</th>
+              <th>写作手感</th>
+              <th>备考方式</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <tr><td colspan="12" style="text-align:center;color:var(--ink-3);padding:24px;">暂无数据</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const LOGIN = { username: "zhaoyi666", password: "houbo123" };
+    const BIN_CONFIG = {
+      apiKey: "$2a$10$Vf9CxUWuIQLpCeH1UqmjEuf.c3d6sTsNSwXLBqHarGiEd5/lT1bKq",
+      binId: "6a3267c9da38895dfecf1c3f",
+      baseUrl: "https://api.jsonbin.io/v3/b"
+    };
+    const LABEL_MAP = {
+      Q1: { cet4: "四级", cet6: "六级" },
+      Q2: { pass: "过线 425", mid: "冲刺 500-550+", high: "冲刺 600+" },
+      Q4_1: { lt90: "< 90", "90_115": "90-115", "115_135": "115-135", gt135: "135 以上" },
+      Q4_grade: { g1: "大一", g2: "大二", g3: "大三", g4: "大四", other: "其他" },
+      Q4_2: { lt380: "< 380", "380_425": "380-425", "425_500": "425-500", gt500: "500 以上", none: "没考过也没模考过" },
+      Q5: { jmth: "加密通话", fyj: "翻译机延迟", bmbx: "半梦半醒", ideal: "自带实时字幕" },
+      Q6: { ymmq: "语音盲区", zsfy: "中式发音", dcnl: "单词粘连", ideal: "自带解码器" },
+      Q7: { hmq: "荒漠期", gsfy: "龟速翻译派", dwpc: "定位偏差", qxkb: "全线溃败", ideal: "上帝视角" },
+      Q8: { dnkb: "大脑空白型", chinglish: "Chinglish 达人", mb: "万能模板依赖", ideal: "高阶直出型" },
+      Q9: { st: "疯狂刷真题/模拟题", bdc: "背单词 App", sp: "短视频/碎片化 App/美剧磨耳朵", xt: "系统跟读+精听训练", none: "还没开始备考/学习" }
+    };
+    const COLORS = ["#0E8C6D","#EBA93C","#16654F","#5D8AA8","#B8674A","#7D6AB3","#4E7A5D","#D78895"];
+    const charts = {};
+    let autoRefresh = true;
+    let timer = null;
+
+    function mapLabel(group, value, row) {
+      if (value == null) return "未填写";
+      if (group === "Q4_grade" && value === "other") return row && row.Q4_grade_other ? row.Q4_grade_other : "其他";
+      return (LABEL_MAP[group] && LABEL_MAP[group][value]) || value;
+    }
+
+    function timeBucket(days) {
+      if (!(days > 0)) return "未填写";
+      if (days <= 15) return "15 天内";
+      if (days <= 30) return "16-30 天";
+      if (days <= 60) return "31-60 天";
+      return "60 天以上";
+    }
+
+    async function fetchDataset() {
+      const resp = await fetch(`${BIN_CONFIG.baseUrl}/${BIN_CONFIG.binId}/latest`, {
+        method: "GET",
+        headers: {
+          "X-Master-Key": BIN_CONFIG.apiKey,
+          "X-Bin-Meta": "false"
+        }
+      });
+      if (!resp.ok) throw new Error(`Read failed: ${resp.status}`);
+      const data = await resp.json();
+      return Array.isArray(data.submissions) ? data.submissions : [];
+    }
+
+    function countBy(rows, key, mapper) {
+      return rows.reduce((acc, row) => {
+        const value = mapper ? mapper(row[key], row) : row[key];
+        const label = value || "未填写";
+        acc[label] = (acc[label] || 0) + 1;
+        return acc;
+      }, {});
+    }
+
+    function countMulti(rows, key, mapper) {
+      return rows.reduce((acc, row) => {
+        const values = Array.isArray(row[key]) ? row[key] : [];
+        values.forEach((value) => {
+          const label = mapper ? mapper(value, row) : value;
+          acc[label] = (acc[label] || 0) + 1;
+        });
+        return acc;
+      }, {});
+    }
+
+    function topEntry(obj) {
+      const entries = Object.entries(obj);
+      if (!entries.length) return ["-", 0];
+      return entries.sort((a, b) => b[1] - a[1])[0];
+    }
+
+    function formatDate(value) {
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? (value || "-") : date.toLocaleString("zh-CN", { hour12: false });
+    }
+
+    function renderChart(id, type, labels, values, extra = {}) {
+      const canvas = document.getElementById(id);
+      if (!canvas) return;
+      if (!labels.length) {
+        canvas.style.display = "none";
+        if (!canvas.nextElementSibling || !canvas.nextElementSibling.classList.contains("empty")) {
+          const empty = document.createElement("div");
+          empty.className = "empty";
+          empty.textContent = "暂无数据";
+          canvas.parentNode.appendChild(empty);
+        }
+        if (charts[id]) {
+          charts[id].destroy();
+          delete charts[id];
+        }
+        return;
+      }
+      canvas.style.display = "block";
+      if (canvas.nextElementSibling && canvas.nextElementSibling.classList.contains("empty")) {
+        canvas.nextElementSibling.remove();
+      }
+      const config = {
+        type,
+        data: {
+          labels,
+          datasets: [{
+            data: values,
+            backgroundColor: labels.map((_, i) => COLORS[i % COLORS.length]),
+            borderColor: type === "line" ? "#0E8C6D" : "#ffffff",
+            borderWidth: type === "line" ? 3 : 1,
+            fill: type === "line",
+            tension: .35
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: type === "pie" || type === "doughnut",
+              position: "bottom"
+            }
+          },
+          scales: type === "pie" || type === "doughnut" ? {} : {
+            y: { beginAtZero: true, ticks: { precision: 0 } }
+          }
+        }
+      };
+      if (extra.data) config.data = extra.data;
+      if (extra.options) config.options = extra.options;
+      if (charts[id]) {
+        charts[id].data = config.data;
+        charts[id].options = config.options;
+        charts[id].update();
+      } else {
+        charts[id] = new Chart(canvas, config);
+      }
+    }
+
+    function renderInsights(total, gradeCounts, goalCounts, issueCounts, methodCounts, timeCounts) {
+      const el = document.getElementById("insights");
+      el.innerHTML = "";
+      if (!total) {
+        el.innerHTML = '<div class="empty">暂无样本</div>';
+        return;
+      }
+      const [grade, gradeCount] = topEntry(gradeCounts);
+      const [goal, goalCount] = topEntry(goalCounts);
+      const [issue, issueCount] = topEntry(issueCounts);
+      const [method, methodCount] = topEntry(methodCounts);
+      const [time, timeCount] = topEntry(timeCounts);
+      [
+        `主力样本集中在${grade}，共 ${gradeCount} 人。`,
+        `当前最集中的目标是${goal}，共 ${goalCount} 人。`,
+        `高频短板是${issue}，累计出现 ${issueCount} 次。`,
+        `最常见的备考方式是${method}，被选择 ${methodCount} 次。`,
+        `备考节奏上，${time}的人最多，共 ${timeCount} 人。`
+      ].forEach((text) => {
+        const item = document.createElement("div");
+        item.className = "insight";
+        item.textContent = text;
+        el.appendChild(item);
+      });
+    }
+
+    function renderTable(rows) {
+      const body = document.getElementById("tableBody");
+      if (!rows.length) {
+        body.innerHTML = '<tr><td colspan="12" style="text-align:center;color:var(--ink-3);padding:24px;">暂无数据</td></tr>';
+        return;
+      }
+      body.innerHTML = rows.slice().sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt)).map((row) => `
+        <tr>
+          <td>${formatDate(row.submittedAt)}</td>
+          <td>${mapLabel("Q1", row.Q1, row)}</td>
+          <td>${mapLabel("Q2", row.Q2, row)}</td>
+          <td>${row.Q3 || "-"}</td>
+          <td>${mapLabel("Q4_1", row.Q4_1, row)}</td>
+          <td>${mapLabel("Q4_grade", row.Q4_grade, row)}</td>
+          <td>${mapLabel("Q4_2", row.Q4_2, row)}</td>
+          <td>${(row.Q5 || []).map((v) => `<span class="tag">${mapLabel("Q5", v, row)}</span>`).join("") || "-"}</td>
+          <td>${(row.Q6 || []).map((v) => `<span class="tag">${mapLabel("Q6", v, row)}</span>`).join("") || "-"}</td>
+          <td>${(row.Q7 || []).map((v) => `<span class="tag">${mapLabel("Q7", v, row)}</span>`).join("") || "-"}</td>
+          <td>${mapLabel("Q8", row.Q8, row)}</td>
+          <td>${(row.Q9 || []).map((v) => `<span class="tag">${mapLabel("Q9", v, row)}</span>`).join("") || "-"}</td>
+        </tr>
+      `).join("");
+    }
+
+    async function refreshDashboard() {
+      try {
+        const rows = await fetchDataset();
+        const gradeCounts = countBy(rows, "Q4_grade", (value, row) => mapLabel("Q4_grade", value, row));
+        const goalCounts = countBy(rows, "Q2", (value, row) => mapLabel("Q2", value, row));
+        const baseCounts = countBy(rows, "Q4_1", (value, row) => mapLabel("Q4_1", value, row));
+        const timeCounts = countBy(rows, "Q3", (value) => timeBucket(Number(value)));
+        const q6Counts = countMulti(rows, "Q6", (value, row) => mapLabel("Q6", value, row));
+        const q7Counts = countMulti(rows, "Q7", (value, row) => mapLabel("Q7", value, row));
+        const q8Counts = countBy(rows, "Q8", (value, row) => mapLabel("Q8", value, row));
+        const methodCounts = countMulti(rows, "Q9", (value, row) => mapLabel("Q9", value, row));
+        const issueCounts = {};
+        [q6Counts, q7Counts, q8Counts].forEach((group) => {
+          Object.entries(group).forEach(([key, value]) => {
+            issueCounts[key] = (issueCounts[key] || 0) + value;
+          });
+        });
+
+        const total = rows.length;
+        const [topGrade, topGradeCount] = topEntry(gradeCounts);
+        const [topGoal, topGoalCount] = topEntry(goalCounts);
+        const [topIssue, topIssueCount] = topEntry(issueCounts);
+
+        document.getElementById("metricTotal").textContent = total;
+        document.getElementById("metricGrade").textContent = topGrade;
+        document.getElementById("metricGradeHint").textContent = total ? `${topGradeCount} 人` : "等待数据";
+        document.getElementById("metricGoal").textContent = topGoal;
+        document.getElementById("metricGoalHint").textContent = total ? `${topGoalCount} 人` : "等待数据";
+        document.getElementById("metricIssue").textContent = topIssue;
+        document.getElementById("metricIssueHint").textContent = total ? `累计 ${topIssueCount} 次` : "等待数据";
+        document.getElementById("updatedAt").textContent = `最近刷新：${new Date().toLocaleString("zh-CN", { hour12: false })}`;
+        document.getElementById("sampleCount").textContent = `样本数：${total}`;
+
+        renderInsights(total, gradeCounts, goalCounts, issueCounts, methodCounts, timeCounts);
+        renderTable(rows);
+        renderChart("chartGrade", "bar", Object.keys(gradeCounts), Object.values(gradeCounts), {
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+        });
+        renderChart("chartGoal", "doughnut", Object.keys(goalCounts), Object.values(goalCounts));
+        renderChart("chartBase", "bar", Object.keys(baseCounts), Object.values(baseCounts), {
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+        });
+        renderChart("chartTime", "line", Object.keys(timeCounts), Object.values(timeCounts), {
+          data: { labels: Object.keys(timeCounts), datasets: [{ data: Object.values(timeCounts), borderColor: "#0E8C6D", backgroundColor: "rgba(14,140,109,.16)", fill: true, tension: .35 }] },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+        });
+        renderChart("chartIssue", "bar", Object.keys(issueCounts), Object.values(issueCounts), {
+          options: { indexAxis: "y", responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { precision: 0 } } } }
+        });
+        renderChart("chartMethod", "bar", Object.keys(methodCounts), Object.values(methodCounts), {
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+        });
+      } catch (err) {
+        console.error("refreshDashboard", err);
+        document.getElementById("updatedAt").textContent = "最近刷新：失败";
+      }
+    }
+
+    function syncAutoState() {
+      if (timer) clearInterval(timer);
+      if (autoRefresh) {
+        timer = setInterval(refreshDashboard, 60000);
+        document.getElementById("autoState").textContent = "自动刷新：每 60 秒";
+        document.getElementById("toggleBtn").textContent = "关闭自动刷新";
+      } else {
+        document.getElementById("autoState").textContent = "自动刷新：已关闭";
+        document.getElementById("toggleBtn").textContent = "开启自动刷新";
+      }
+    }
+
+    async function exportPdf() {
+      const node = document.getElementById("dashboardView");
+      try {
+        const canvas = await html2canvas(node, { scale: 2, useCORS: true, backgroundColor: "#EFF5F1" });
+        const img = canvas.toDataURL("image/png");
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF("p", "mm", "a4");
+        const pdfW = pdf.internal.pageSize.getWidth();
+        const pdfH = pdf.internal.pageSize.getHeight();
+        const imgW = pdfW;
+        const imgH = canvas.height * imgW / canvas.width;
+        let left = imgH;
+        let pos = 0;
+        pdf.addImage(img, "PNG", 0, pos, imgW, imgH);
+        left -= pdfH;
+        while (left > 0) {
+          pos = left - imgH;
+          pdf.addPage();
+          pdf.addImage(img, "PNG", 0, pos, imgW, imgH);
+          left -= pdfH;
+        }
+        pdf.save(`storage_${new Date().toISOString().slice(0, 10)}.pdf`);
+      } catch (err) {
+        console.error("exportPdf", err);
+      }
+    }
+
+    function unlockDashboard() {
+      sessionStorage.setItem("storage_logged_in", "1");
+      document.getElementById("loginView").classList.add("hidden");
+      document.getElementById("dashboardView").classList.remove("hidden");
+      syncAutoState();
+      refreshDashboard();
+    }
+
+    function handleLogin() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+      if (username === LOGIN.username && password === LOGIN.password) {
+        document.getElementById("loginMsg").textContent = "";
+        unlockDashboard();
+      } else {
+        document.getElementById("loginMsg").textContent = "账号或密码错误";
+      }
+    }
+
+    document.getElementById("loginBtn").addEventListener("click", handleLogin);
+    document.getElementById("password").addEventListener("keydown", (event) => {
+      if (event.key === "Enter") handleLogin();
+    });
+    document.getElementById("refreshBtn").addEventListener("click", refreshDashboard);
+    document.getElementById("toggleBtn").addEventListener("click", () => {
+      autoRefresh = !autoRefresh;
+      syncAutoState();
+    });
+    document.getElementById("pdfBtn").addEventListener("click", exportPdf);
+
+    if (sessionStorage.getItem("storage_logged_in") === "1") {
+      unlockDashboard();
+    }
+  </script>
+</body>
+</html>
