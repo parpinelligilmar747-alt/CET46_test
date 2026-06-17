@@ -1,0 +1,1950 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>四六级英语能力测评 · 个性化诊断报告</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700;900&family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&display=swap" rel="stylesheet" />
+<style>
+  /* ========== 设计系统 ========== */
+  :root {
+    --bg: #EFF5F1;
+    --bg-paper: #F8FBF9;
+    --surface: #FFFFFF;
+    --ink: #1A2C26;
+    --ink-2: #3B4F48;
+    --ink-3: #6C7D76;
+    --line: #DAE7E0;
+    --line-strong: #B8D0C5;
+    --accent: #0E8C6D;       /* 清新翡翠绿 */
+    --accent-dark: #0A6E55;
+    --gold: #EBA93C;         /* 暖琥珀（荧光笔高亮） */
+    --forest: #16654F;
+    --shadow-1: 0 1px 2px rgba(26,44,38,.04), 0 4px 16px rgba(26,44,38,.06);
+    --shadow-2: 0 8px 32px rgba(26,44,38,.10);
+
+    --font-serif: "Noto Serif SC", "Songti SC", "STSong", serif;
+    --font-sans: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+    --font-display: "Fraunces", "Noto Serif SC", serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    font-size: 16px;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(14,140,109,.05), transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(22,101,79,.05), transparent 50%);
+  }
+
+  /* 纸张纹理 */
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    opacity: .035;
+    mix-blend-mode: multiply;
+    z-index: 1;
+  }
+
+  .app { position: relative; z-index: 2; min-height: 100vh; }
+
+  /* ========== 顶栏 ========== */
+  .topbar {
+    position: sticky; top: 0;
+    backdrop-filter: blur(20px) saturate(180%);
+    background: rgba(245,240,230,.85);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 50;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: .02em;
+  }
+  .brand-mark {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--accent);
+    display: grid; place-items: center;
+    color: var(--bg-paper);
+    font-family: var(--font-display);
+    font-weight: 900; font-size: 13px;
+    box-shadow: 0 2px 8px rgba(14,140,109,.3);
+  }
+  .topbar-meta { font-size: 12px; color: var(--ink-3); letter-spacing: .08em; }
+
+  /* ========== 通用按钮 ========== */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 14px 32px;
+    background: var(--ink);
+    color: var(--bg-paper);
+    border: none; border-radius: 999px;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all .25s cubic-bezier(.4,0,.2,1);
+    letter-spacing: .04em;
+  }
+  .btn:hover { background: var(--accent); transform: translateY(-1px); box-shadow: var(--shadow-2); }
+  .btn:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink-2);
+    border: 1px solid var(--line-strong);
+  }
+  .btn-ghost:hover { background: var(--bg-paper); color: var(--ink); border-color: var(--ink); transform: none; }
+  .btn-arrow::after { content: "→"; font-family: var(--font-display); }
+
+  /* ========== 欢迎页 ========== */
+  .welcome {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 80px 28px 120px;
+  }
+  .welcome-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-display);
+    font-size: 12px;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 28px;
+  }
+  .welcome-eyebrow::before {
+    content: ""; width: 28px; height: 1px; background: var(--accent);
+  }
+  .welcome-title {
+    font-family: var(--font-serif);
+    font-weight: 900;
+    font-size: clamp(40px, 7vw, 72px);
+    line-height: 1.05;
+    letter-spacing: -.02em;
+    margin-bottom: 28px;
+  }
+  .welcome-title em {
+    font-style: normal;
+    color: var(--accent);
+    font-family: var(--font-display);
+    font-weight: 900;
+  }
+  .welcome-sub {
+    font-size: 18px;
+    color: var(--ink-2);
+    max-width: 640px;
+    margin-bottom: 56px;
+    line-height: 1.8;
+  }
+  .welcome-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 56px;
+  }
+  .welcome-meta-item {
+    padding: 24px 24px 24px 0;
+    border-right: 1px solid var(--line);
+  }
+  .welcome-meta-item:last-child { border-right: none; }
+  .welcome-meta-num {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 36px;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .welcome-meta-label {
+    font-size: 13px; color: var(--ink-3); letter-spacing: .04em;
+  }
+
+  /* ========== 问题页 ========== */
+  .quiz {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 28px 120px;
+  }
+  .progress {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 48px;
+    font-family: var(--font-display);
+    font-size: 13px;
+    letter-spacing: .15em;
+    color: var(--ink-3);
+  }
+  .progress-bar {
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+  .progress-fill {
+    position: absolute; inset: 0;
+    background: var(--accent);
+    transform-origin: left;
+    transition: transform .5s cubic-bezier(.4,0,.2,1);
+  }
+  .q-number {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: .25em;
+    color: var(--accent);
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+  .q-title {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: clamp(26px, 4vw, 36px);
+    line-height: 1.35;
+    margin-bottom: 12px;
+    letter-spacing: -.01em;
+  }
+  .q-hint {
+    font-size: 14px;
+    color: var(--ink-3);
+    margin-bottom: 36px;
+    font-style: italic;
+  }
+  .q-options {
+    display: flex; flex-direction: column; gap: 12px;
+    margin-bottom: 48px;
+  }
+  .opt {
+    display: block;
+    cursor: pointer;
+    background: var(--bg-paper);
+    border: 1.5px solid var(--line);
+    border-radius: 14px;
+    padding: 20px 24px;
+    transition: all .2s cubic-bezier(.4,0,.2,1);
+    position: relative;
+  }
+  .opt:hover {
+    border-color: var(--ink-3);
+    transform: translateX(4px);
+  }
+  .opt input { position: absolute; opacity: 0; pointer-events: none; }
+  .opt-inner {
+    display: flex; align-items: flex-start; gap: 14px;
+  }
+  .opt-bullet {
+    flex-shrink: 0;
+    width: 22px; height: 22px;
+    border: 1.5px solid var(--line-strong);
+    border-radius: 50%;
+    margin-top: 2px;
+    transition: all .2s;
+    display: grid; place-items: center;
+  }
+  .opt-bullet.checkbox { border-radius: 5px; }
+  .opt-text {
+    font-size: 15.5px;
+    color: var(--ink);
+    line-height: 1.6;
+  }
+  .opt-text strong {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    color: var(--accent);
+    margin-right: 6px;
+  }
+  .opt.selected {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+  .opt.selected .opt-text { color: var(--bg-paper); }
+  .opt.selected .opt-text strong { color: var(--gold); }
+  .opt.selected .opt-bullet {
+    border-color: var(--gold);
+    background: var(--gold);
+  }
+  .opt.selected .opt-bullet::after {
+    content: ""; width: 8px; height: 8px;
+    background: var(--ink); border-radius: 50%;
+  }
+  .opt.selected .opt-bullet.checkbox::after { border-radius: 1px; }
+  .q-nav { display: flex; justify-content: space-between; align-items: center; }
+
+  /* "其他"选项的填空框 */
+  .opt-input-wrap {
+    margin: -2px 0 12px;
+    padding: 0 2px;
+    animation: fadeIn .3s cubic-bezier(.4,0,.2,1) both;
+  }
+  .opt-input {
+    width: 100%;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1.5px solid var(--accent);
+    border-radius: 12px;
+    color: var(--ink);
+    outline: none;
+    transition: box-shadow .2s;
+  }
+  .opt-input:focus { box-shadow: 0 0 0 4px rgba(14,140,109,.12); }
+  .opt-input::placeholder { color: var(--ink-3); }
+  .q-multi-hint {
+    display: inline-block;
+    font-size: 12px;
+    color: var(--accent);
+    background: rgba(14,140,109,.1);
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-bottom: 24px;
+    letter-spacing: .04em;
+  }
+
+  /* 数字输入题 */
+  .q-number-wrap {
+    position: relative;
+    margin-bottom: 18px;
+  }
+  .q-number-input {
+    display: block;
+    width: 100%;
+    font-family: var(--font-display), var(--font-serif);
+    font-weight: 900;
+    font-size: 64px;
+    text-align: center;
+    background: var(--bg-paper);
+    border: 1.5px solid var(--line);
+    border-radius: 16px;
+    padding: 32px 24px 32px 24px;
+    color: var(--ink);
+    outline: none;
+    transition: all .2s;
+    letter-spacing: -.02em;
+    -moz-appearance: textfield;
+  }
+  .q-number-input::-webkit-outer-spin-button,
+  .q-number-input::-webkit-inner-spin-button {
+    -webkit-appearance: none; margin: 0;
+  }
+  .q-number-input:focus {
+    border-color: var(--ink);
+    background: var(--surface);
+    box-shadow: 0 0 0 4px rgba(14,140,109,.12);
+  }
+  .q-number-input::placeholder {
+    color: var(--line-strong);
+    font-weight: 400;
+    font-family: var(--font-sans);
+    font-size: 28px;
+  }
+  .q-number-suffix {
+    position: absolute;
+    right: 36px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--font-serif);
+    font-size: 22px;
+    color: var(--ink-3);
+    pointer-events: none;
+  }
+
+  /* ========== 加载页 ========== */
+  .loading {
+    min-height: calc(100vh - 60px);
+    display: grid; place-items: center;
+    padding: 28px;
+  }
+  .loading-inner { text-align: center; max-width: 520px; }
+  .loading-mark {
+    width: 80px; height: 80px;
+    border: 2px solid var(--line);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    margin: 0 auto 32px;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-title {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+  .loading-step {
+    font-size: 14px;
+    color: var(--ink-3);
+    font-family: var(--font-display);
+    letter-spacing: .1em;
+    min-height: 22px;
+  }
+
+  /* ========== 报告页 ========== */
+  .report {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 56px 28px 120px;
+  }
+  .report-header {
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 40px;
+    margin-bottom: 56px;
+    position: relative;
+  }
+  .report-tag {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .25em;
+    color: var(--bg-paper);
+    background: var(--accent);
+    padding: 6px 14px;
+    margin-bottom: 28px;
+    text-transform: uppercase;
+  }
+  .persona-name {
+    font-family: var(--font-serif);
+    font-weight: 900;
+    font-size: clamp(36px, 6vw, 56px);
+    line-height: 1.1;
+    letter-spacing: -.02em;
+    margin-bottom: 20px;
+  }
+  .persona-subtitle {
+    font-size: 17px;
+    color: var(--ink-2);
+    line-height: 1.7;
+    font-family: var(--font-serif);
+    font-style: italic;
+  }
+  .report-stats {
+    display: flex; flex-wrap: wrap; gap: 24px 40px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+  .stat-item { display: flex; flex-direction: column; }
+  .stat-label {
+    font-size: 11px; letter-spacing: .15em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    font-family: var(--font-display);
+    margin-bottom: 4px;
+  }
+  .stat-value {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--ink);
+  }
+  .stat-value.accent { color: var(--accent); }
+
+  .section {
+    margin-bottom: 64px;
+    position: relative;
+  }
+  /* 一级标题：红色，醒目，主导视觉 */
+  .section-num {
+    font-family: var(--font-serif);
+    font-weight: 900;
+    font-size: clamp(28px, 4.2vw, 38px);
+    line-height: 1.2;
+    letter-spacing: -.008em;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  /* 二级标题：黑色，作为副标 */
+  .section-title {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 1.6;
+    margin-bottom: 28px;
+    letter-spacing: -.005em;
+    color: var(--ink);
+  }
+  /* 卷首语：当前面诊的副标是核心论断，多一点视觉权重和分割线 */
+  .section.is-headline .section-title {
+    font-size: clamp(22px, 3vw, 28px);
+    font-weight: 700;
+    line-height: 1.55;
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--line);
+  }
+  .section p {
+    margin-bottom: 16px;
+    color: var(--ink-2);
+    line-height: 1.85;
+    font-size: 16px;
+  }
+  .section p:last-child { margin-bottom: 0; }
+  .section strong, .section b {
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .section .hl {
+    background: linear-gradient(180deg, transparent 60%, rgba(240,205,90,.5) 60%);
+    padding: 0 2px;
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .callout {
+    background: var(--bg-paper);
+    border-left: 3px solid var(--accent);
+    padding: 20px 24px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+    font-size: 15.5px;
+    color: var(--ink-2);
+    line-height: 1.7;
+  }
+  .callout strong { font-style: normal; }
+
+  .path-block {
+    background: #E5F2EB;
+    color: var(--ink);
+    padding: 32px 36px;
+    border-radius: 16px;
+    margin-bottom: 24px;
+    border: 1px solid #C6E4D8;
+    box-shadow: 0 2px 12px rgba(22,101,79,.07);
+  }
+  .path-block p {
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+  .path-block p:last-child { margin-bottom: 0; }
+  .path-steps { font-size: 16px; line-height: 1.85; }
+
+  .material-list {
+    background: var(--bg-paper);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 28px 32px;
+  }
+  .material-prefix {
+    font-size: 15px;
+    color: var(--accent-dark);
+    font-weight: 500;
+    line-height: 1.85;
+    margin-bottom: 28px;
+    padding: 18px 22px;
+    background: rgba(14,140,109,.08);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 10px 10px 0;
+  }
+  .material-prefix strong { color: var(--accent-dark); font-weight: 700; }
+  .material-group {
+    margin-bottom: 18px;
+  }
+  .material-group:last-child { margin-bottom: 0; }
+  .material-group-title {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--accent);
+    margin-bottom: 6px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .material-group-title::before {
+    content: ""; width: 6px; height: 6px;
+    background: var(--accent); border-radius: 50%;
+  }
+  .material-items {
+    font-size: 14.5px;
+    color: var(--ink-2);
+    line-height: 1.8;
+    padding-left: 14px;
+  }
+  .material-items .item {
+    display: inline-block;
+    margin-right: 4px;
+  }
+
+  /* 资料区底部 CTA：有需要的可以找我领取 */
+  .material-cta {
+    margin-top: 32px;
+    padding: 20px 24px;
+    background: linear-gradient(135deg, rgba(14,140,109,.08), rgba(235,169,60,.07));
+    border: 1px solid rgba(14,140,109,.2);
+    border-radius: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+  }
+  .material-cta-text {
+    font-size: 15px;
+    color: var(--ink);
+    line-height: 1.65;
+    flex: 1;
+    min-width: 180px;
+  }
+  .material-cta-text strong {
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .material-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 11px 22px;
+    background: var(--accent);
+    color: var(--bg-paper);
+    border: none;
+    border-radius: 999px;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 14.5px;
+    cursor: pointer;
+    transition: all .25s cubic-bezier(.4,0,.2,1);
+    white-space: nowrap;
+    letter-spacing: .02em;
+  }
+  .material-cta-btn:hover {
+    background: var(--accent-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(14,140,109,.28);
+  }
+
+  .closing {
+    background: linear-gradient(180deg, var(--bg-paper), #E5F1EB);
+    border-radius: 16px;
+    padding: 40px 36px;
+    margin-top: 24px;
+    border: 1px solid var(--line);
+    position: relative;
+  }
+  .closing-quote {
+    font-family: var(--font-display);
+    font-size: 64px;
+    color: var(--accent);
+    line-height: 1;
+    position: absolute;
+    top: 16px; left: 24px;
+    opacity: .15;
+  }
+  .closing p {
+    color: var(--ink-2);
+    font-size: 15.5px;
+    line-height: 1.95;
+  }
+
+  .report-footer {
+    margin-top: 64px;
+    padding-top: 40px;
+    border-top: 1px solid var(--line);
+    text-align: center;
+  }
+  .report-footer .btn { margin: 0 6px 12px; }
+  .report-footer-meta {
+    font-size: 12px; color: var(--ink-3);
+    margin-top: 24px;
+    font-family: var(--font-display);
+    letter-spacing: .1em;
+  }
+
+  /* 报告里特殊强调 */
+  .keypoint {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 30px;
+    margin: 24px 0;
+  }
+  .keypoint-label {
+    font-family: var(--font-display);
+    font-size: 13px;
+    letter-spacing: .2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+  .keypoint-text {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: 19px;
+    color: var(--ink);
+    line-height: 1.7;
+    letter-spacing: .005em;
+  }
+
+  /* 动画 */
+  .fade-in {
+    animation: fadeIn .5s cubic-bezier(.4,0,.2,1) both;
+  }
+  .stagger-1 { animation-delay: .05s; }
+  .stagger-2 { animation-delay: .12s; }
+  .stagger-3 { animation-delay: .2s; }
+  .stagger-4 { animation-delay: .28s; }
+  .stagger-5 { animation-delay: .36s; }
+  .stagger-6 { animation-delay: .44s; }
+  .stagger-7 { animation-delay: .52s; }
+  .stagger-8 { animation-delay: .6s; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* 响应式 */
+  @media (max-width: 640px) {
+    .topbar { padding: 12px 18px; }
+    .welcome { padding: 48px 20px 80px; }
+    .quiz, .report { padding-left: 20px; padding-right: 20px; }
+    .opt { padding: 16px 18px; }
+    .opt-text { font-size: 14.5px; }
+    .path-block, .closing { padding: 24px 22px; }
+    .material-list { padding: 22px 22px; }
+    .welcome-meta { grid-template-columns: 1fr 1fr; }
+    .welcome-meta-item:nth-child(2) { border-right: none; }
+    .welcome-meta-item:nth-child(3) { border-top: 1px solid var(--line); padding-top: 24px; }
+    .welcome-meta-item:nth-child(4) { border-top: 1px solid var(--line); padding-top: 24px; border-right: none; }
+  }
+
+  .hidden { display: none !important; }
+
+  /* 保存为 PDF（浏览器导出）时的优化 */
+  @page { margin: 14mm; }
+  @media print {
+    /* 强制保留配色背景，否则导出会丢失绿色卡片等 */
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    .topbar { display: none !important; }            /* 隐藏顶栏 */
+    .report-footer { display: none !important; }     /* 隐藏底部按钮 */
+    body::before { display: none !important; }        /* 去掉纸张噪点纹理 */
+    body { background: var(--bg) !important; }
+    .report { padding: 0 !important; max-width: 100% !important; }
+    /* 尽量不把板块从中间截断 */
+    .section, .path-block, .material-list, .closing, .keypoint, .callout {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    .section-num { page-break-after: avoid; }
+  }
+
+  /* 微信二维码弹窗 */
+  .wechat-modal {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(26,44,38,.55);
+    z-index: 1000;
+    align-items: center; justify-content: center;
+    padding: 24px;
+    backdrop-filter: blur(4px);
+  }
+  .wechat-modal-card {
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 32px 36px;
+    text-align: center;
+    position: relative;
+    max-width: 340px;
+    box-shadow: var(--shadow-2);
+    animation: fadeIn .25s cubic-bezier(.4,0,.2,1) both;
+  }
+  .wechat-modal-close {
+    position: absolute; top: 12px; right: 16px;
+    background: none; border: none;
+    font-size: 26px; color: var(--ink-3);
+    cursor: pointer; line-height: 1;
+  }
+  .wechat-modal-close:hover { color: var(--ink); }
+  .wechat-modal-title {
+    font-family: var(--font-serif);
+    font-weight: 700; font-size: 20px;
+    margin-bottom: 20px; color: var(--ink);
+  }
+  .wechat-modal-qr {
+    width: 220px; height: 220px;
+    object-fit: contain;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+  }
+  .wechat-modal-hint {
+    margin-top: 16px;
+    font-size: 14px; color: var(--ink-3);
+  }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">CET</span>
+      <span>四六级英语能力测评</span>
+    </div>
+    <div class="topbar-meta">v 2.0 · 个性化诊断</div>
+  </header>
+
+  <main id="view"></main>
+</div>
+
+<script>
+/* ============================================================
+   数据：完全按文档第二章—第八章实现
+   ============================================================ */
+
+const QUESTIONS = [
+  {
+    id: 'Q1', type: 'single', title: '你考的是？',
+    options: [
+      { id: 'cet4', label: '四级' },
+      { id: 'cet6', label: '六级' }
+    ]
+  },
+  {
+    id: 'Q2', type: 'single', title: '你的目标是？',
+    options: [
+      { id: 'pass', label: '过线 425 分' },
+      { id: 'mid',  label: '冲刺 500–550+' },
+      { id: 'high', label: '冲刺 600+' }
+    ]
+  },
+  {
+    id: 'Q3', type: 'number', title: '距离考试还有多少天？',
+    placeholder: '例如 60',
+    min: 1, max: 365,
+    hint: '直接填写精确天数，系统会自动判定时间档'
+  },
+  {
+    id: 'Q4_1', type: 'single', title: '你的高考英语基础是？',
+    options: [
+      { id: 'lt90',     label: '< 90' },
+      { id: '90_115',   label: '90–115' },
+      { id: '115_135',  label: '115–135' },
+      { id: 'gt135',    label: '135 以上' }
+    ]
+  },
+  {
+    id: 'Q4_grade', type: 'single', title: '你现在是大几？',
+    options: [
+      { id: 'g1',    label: '准大一' },
+      { id: 'g2',    label: '大二' },
+      { id: 'g3',    label: '大三' },
+      { id: 'g4',    label: '大四' },
+      { id: 'other', label: '其他', withInput: true, inputPlaceholder: '请填写你的具体情况（必填）' }
+    ]
+  },
+  {
+    id: 'Q4_2', type: 'single', title: '考过或模考过四六级的话，最近成绩大概是？',
+    options: [
+      { id: 'lt380',    label: '< 380' },
+      { id: '380_425',  label: '380–425' },
+      { id: '425_500',  label: '425–500' },
+      { id: 'gt500',    label: '500 以上' },
+      { id: 'none',     label: '没考过也没模考过' }
+    ]
+  },
+  {
+    id: 'Q5', type: 'multi', title: '关上书只用耳朵听真题录音时，你的体感是？',
+    hint: '可多选',
+    options: [
+      { id: 'jmth',  label: '加密通话', desc: '单词好像都背过，连一起像外语，甚至怀疑没戴耳机' },
+      { id: 'fyj',   label: '翻译机延迟', desc: '能听出单词，但要脑内拼+翻译成中文，下一句直接错过' },
+      { id: 'bmbx',  label: '半梦半醒', desc: '短句能懂，长句一快就死机，捕捉不到关键信号' },
+      { id: 'ideal', label: '自带实时字幕', desc: '听感丝滑，基本不脑内翻译，能听出连读弱读' }
+    ]
+  },
+  {
+    id: 'Q6', type: 'multi', title: '回想刚才那种听不懂的感觉——最根本的原因更接近哪种？',
+    hint: '可多选',
+    options: [
+      { id: 'ymmq',  label: '语音盲区', desc: '完全不知道什么是连读、弱读' },
+      { id: 'zsfy',  label: '中式发音', desc: '脑子里按拼写读，跟真实英/美音对不上' },
+      { id: 'dcnl',  label: '单词粘连', desc: '单词拆开都认识，但一进句子就感觉它们都连在一起，分不清边界' },
+      { id: 'ideal', label: '自带解码器', desc: '对连读、弱读、失爆等规律形成肌肉记忆，能预判走向' }
+    ]
+  },
+  {
+    id: 'Q7', type: 'multi', title: '你的词汇与阅读障碍主要在于？',
+    hint: '可多选',
+    options: [
+      { id: 'hmq',   label: '荒漠期', desc: '生词多到看文章像看甲骨文' },
+      { id: 'gsfy',  label: '龟速翻译派', desc: '读得极慢、逐词翻译，时间永远不够' },
+      { id: 'dwpc',  label: '定位偏差', desc: '文章看懂了，一做题就掉干扰项' },
+      { id: 'qxkb',  label: '全线溃败', desc: '单词、句子、做题全不行' },
+      { id: 'ideal', label: '上帝视角', desc: '单词长难句无障碍，目标是追求满分或极速解题' }
+    ]
+  },
+  {
+    id: 'Q8', type: 'single', title: '写作翻译，你最真实的手感是？',
+    options: [
+      { id: 'dnkb',      label: '大脑空白型', desc: '中文逻辑都没有，半天憋不出一句' },
+      { id: 'chinglish', label: 'Chinglish 达人', desc: '能写但全是初中词，语法错满篇' },
+      { id: 'mb',        label: '万能模板依赖', desc: '懂框架但缺高级表达，像流水线，没亮点' },
+      { id: 'ideal',     label: '高阶直出型', desc: '英文逻辑直接输出，遣词造句地道有分寸' }
+    ]
+  },
+  {
+    id: 'Q9', type: 'multi', title: '你目前备考/学英语主要靠？',
+    hint: '可多选；选了「还没开始」就不能再选别的',
+    options: [
+      { id: 'st',   label: '疯狂刷真题/模拟题' },
+      { id: 'bdc',  label: '抱着单词 App 背单词' },
+      { id: 'sp',   label: '刷英语短视频/碎片化 App/看美剧综艺磨耳朵' },
+      { id: 'xt',   label: '系统跟读+精听训练' },
+      { id: 'none', label: '还没开始备考/学习', exclusive: true }
+    ]
+  }
+];
+
+/* ========== 24 人物画像名（第四章） ========== */
+const PERSONA = {
+  '四级|极限抢分|D1': '四级极限逆袭型',
+  '四级|极限抢分|D2': '四级极限过线型',
+  '四级|极限抢分|D3': '四级极限冲分型',
+  '四级|极限抢分|D4': '四级极限冲顶型',
+  '四级|中周期|D1': '四级逆袭型',
+  '四级|中周期|D2': '四级过线型',
+  '四级|中周期|D3': '四级冲分型',
+  '四级|中周期|D4': '四级冲顶型',
+  '四级|长线|D1': '四级稳稳逆袭型',
+  '四级|长线|D2': '四级稳稳过线型',
+  '四级|长线|D3': '四级稳稳冲分型',
+  '四级|长线|D4': '四级稳稳冲顶型',
+  '六级|极限抢分|D1': '六级极限逆袭型',
+  '六级|极限抢分|D2': '六级极限过线型',
+  '六级|极限抢分|D3': '六级极限冲分型',
+  '六级|极限抢分|D4': '六级极限冲顶型',
+  '六级|中周期|D1': '六级逆袭型',
+  '六级|中周期|D2': '六级过线型',
+  '六级|中周期|D3': '六级冲分型',
+  '六级|中周期|D4': '六级冲顶型',
+  '六级|长线|D1': '六级稳稳逆袭型',
+  '六级|长线|D2': '六级稳稳过线型',
+  '六级|长线|D3': '六级稳稳冲分型',
+  '六级|长线|D4': '六级稳稳冲顶型'
+};
+
+/* ========== 第五章 副标题 片段 ========== */
+const SUBA = {
+  '发音未建立': '单词都认识，耳朵却没打开',
+  '辨音弱':     '词都懂，连起来就散',
+  '处理慢':     '听得见，却永远慢半拍',
+  '阅读=词汇型': '看文章像看甲骨文',
+  '阅读=速度型': '逐词翻译，时间永远不够',
+  '听力已较好':  '差的是最后那点细节'
+};
+const SUBB = {
+  '刷题型':  '题没少刷，分却卡住',
+  '碎片型':  '学得很碎，串不起来',
+  '系统型':  '方法没大错，缺的是顺序',
+  '未起步':  '还没开始，正好别走弯路'
+};
+
+/* ========== 第六章 面诊片段 ========== */
+const TIME_DESC = { '极限抢分':'离考试不足 45 天', '中周期':'备考还有 45–90 天', '长线':'备考 90 天以上' };
+
+const BASE_DESC = {
+  D1: { with: '历史成绩 380 以下', without: '尚未经四六级检验、按高考评估偏弱' },
+  D2: { with: '卡在 380–425',     without: '尚未经四六级检验、按高考评估在过线边缘' },
+  D3: { with: '目前基础在 425–500 分', without: '尚未经四六级检验、按高考评估基础尚可' },
+  D4: { with: '目前四六级能拿到 500 以上', without: '尚未经四六级检验、按高考评估基础扎实' }
+};
+const BASE_VERDICT = {
+  D1: '离过线确实有距离，但先别急着否定自己',
+  D2: '这是四六级最危险的一个区间，过线就差临门十几二十分',
+  D3: '过线没问题，你要的是更稳、更高',
+  D4: '你已在高分段，目标是冲顶'
+};
+
+const GLOBAL_SCAN = {
+  '四级': '四级是听力（约 35%）+阅读（约 35%）+写作翻译（约 30%）的综合仗，三块都不能空。',
+  '六级': '六级听力更快更难、阅读信息量更大、写作翻译要求更高，听力/阅读/写作翻译三块都比四级上一个台阶。'
+};
+
+const TIME_TONE = {
+  '极限抢分': '进入极限周期，规则只有一条：把有限时间砸在「得分效率最高」的地方，不是三块平均铺、从头重来。',
+  '中周期':   '时间够打一场有准备的仗，但不能浪费在无效努力上，要先打通最影响全局的那块。',
+  '长线':     '时间是你最大的优势，但只有按正确顺序用才算优势——地基没打，时间越多浪费越多。'
+};
+
+const BASE_STRATEGY = {
+  D1: '分差大的人反而有个优势：听力是最容易整片拿回分的地方（不是抠词汇，是补对发音后大段松动），它还会顺带把阅读速度和语感带起来；阅读再上真题，写作翻译用模板补底。基础差不致命，方法对就能逆袭。',
+  D2: '你卡在过线边缘，最危险——差的往往就是听力那十几二十分，补对就过线；阅读靠真题题感冲刺，写作翻译模板保底，听力提升起来阅读也会跟着综合提升。',
+  D3: '你已过线想往上：再靠刷题背词收益递减，听力是你和高分之间最大的变量；阅读保手感，写作翻译往高级表达打磨，三块协同才上得去。',
+  D4: '你在高分段冲顶：阅读写作翻译已接近天花板、再投入收益递减，真正卡你上高分的几乎只剩听力的细节与速度；其余两块维持精修。'
+};
+
+const CLOSE_LINE = '往下：先看听力板块诊断，再依次给你阅读、写作翻译的提分路线。';
+
+/* ========== 第八章 听力文案 ========== */
+const LISTENING_TXT = {
+  '发音未建立': `
+    <p>四六级听力占整卷约 35%，是分差最大的一块。</p>
+    <p><strong>你的问题：发音未建立——单词都背过，连起来像外语。</strong>这不是词汇量问题，是脑子里的发音和真实声音对不上。你在脑子里存的，是单个单词字正腔圆的"理想发音"；但听力音频里放出来的，是经过了<span class="hl">连读、弱读、失去爆破（吞音）</span>等处理的"真实发音"。两套声音一旦匹配不上，你的大脑就会瞬间死机、卡壳。</p>
+    <div class="keypoint">
+      <div class="keypoint-label">提升路径</div>
+      <div class="keypoint-text">学透发音体系（连读弱读变音等搞懂、会读、会用） → 真题精听 → 跟读</div>
+    </div>
+    <p>发音一通，短对话、长对话、篇章听力会整片松动，不是一分分抠；而且这块是真本事，考完不会还回去，还会迁移到阅读速度。<strong>这就是为什么听力是你这次提分最大的杠杆。</strong></p>`,
+  '辨音弱': `
+    <p>四六级听力约占 35%。</p>
+    <p><strong>你的问题：单词拆开都认识、连成句就分不清边界</strong>，症结在哪？其实是你对<span class="hl">连读、弱读、变音</span>等这些发音规律不清晰，关键是听不出的东西再听一百遍还是听不出，所以你得先知道系统的发音规律，耳朵才能慢慢听清。</p>
+    <div class="keypoint">
+      <div class="keypoint-label">提升路径</div>
+      <div class="keypoint-text">连读弱读变音等专项学习 → 带着规律去真题精听 → 跟读校准</div>
+    </div>
+    <p>听力里面的句子基本都是按"意群"连在一起的。当你耳朵习惯了一块一块地听英语，眼睛也会不自觉地一块一块地扫视文章。<strong>听力通了，阅读速度也会连带翻倍！</strong></p>`,
+  '处理慢': `
+    <p>四六级听力约占 35%，且不等人。</p>
+    <p><strong>你的问题：能抓词但要脑内拼+翻译，下一句就漏。</strong>核心原因是英语在你脑子里面的转化是<span class="hl">【听到声音 → 脑内拼写 → 翻译成中文 → 理解意思】</span>这条弯路。</p>
+    <div class="keypoint">
+      <div class="keypoint-label">提升路径</div>
+      <div class="keypoint-text">发音系统学习纠正+内化 → 精听提速 → 真题限时</div>
+    </div>
+    <p>千万别去死磕翻译速度，真正的解法是<strong>重塑你的发音系统</strong>。当你搞懂了连读、弱读，你的大脑就不再是一个词一个词地去抠拼写，而是直接接收一个完整的"意群声音块"。当你的大脑习惯了直接用声音映射意思，不仅听力篇章和长对话能轻松跟上，你默读文章的速度也会同步起飞。摆脱了中文翻译的拐杖，<strong>听力和阅读的底层能力，其实是相通的！</strong></p>`,
+  '已较好': `
+    <p>听力是你少有的优势项，先肯定。但四六级高分要的不是听懂大意，是<strong>细节、数字、转折都不丢且跟得上语速</strong>。把它往满分档拔，性价比常比补别的板块还高，而且这是真能带出考场的能力。</p>
+    <div class="keypoint">
+      <div class="keypoint-label">提升路径</div>
+      <div class="keypoint-text">高阶精听 → 真题细节专项 → 限时模考</div>
+    </div>`
+};
+
+/* ========== 第八章 阅读文案 ========== */
+const READING_TXT = {
+  '词汇型': `
+    <p>四六级阅读占比高达 35%，你做题时的常态是：满篇生词，看文章就像看甲骨文。</p>
+    <p>遇到这种情况，第一反应往往是去疯狂刷背单词 App。但这种<strong>"孤立记忆法"其实是一个巨大的备考误区</strong>。因为单纯依靠 App，你练习的仅仅是视觉上的"拼写识别"，完全脱离了真实的语境和发音。这就是为什么你背了上千个词，在阅读里依然连不成句，在听力里依然听不懂。</p>
+    <div class="callout"><strong>真正高效的破局方法是：</strong>把单词放进真实的句子里，带着声音去记。当你能在脑海里把一个词的发音、拼写和意思完全挂钩时，它就不再是僵硬的字母了。词汇量一旦在这个维度上真正立起来，你会发现，不但阅读的障碍扫清了，连带着听力分数也会跟着蹭蹭往上涨。<strong>一份投入，两份回报！</strong></div>`,
+  '速度型': `
+    <p>四六级阅读约占 35%，时间卡得死。<strong>你的问题：逐词翻译、读得慢。</strong></p>
+    <p>注意了，这是一个<span class="hl">极其隐蔽的致命习惯</span>——你在做阅读时，其实大脑里可能一直在"默默读出声 + 翻译成中文"。你的眼睛看文章的速度，被你脑子里那个"慢吞吞、一个词一个词蹦"的内置语音包给拖垮了！</p>
+    <p>阅读和听力，<strong>在底层是同一个病根</strong>！你的发音没有内化，大脑不知道怎么把单词连成"意群（一整个画面）"，所以只能在脑子里机械地逐字念经。</p>
+    <p>所以，想提高阅读速度，千万不要上来就闭着眼睛死刷题！正确的提分节奏是这样的：</p>
+    <div class="keypoint">
+      <div class="keypoint-label">第一步 · 换引擎</div>
+      <div class="keypoint-text">通过听力和发音的打通，让大脑习惯按"意群"接收信息。当你脑子里的声音流畅了，你眼睛扫视文章的速度就会从"盯字"变成"扫块"，速度自然跟上。</div>
+    </div>
+    <div class="keypoint">
+      <div class="keypoint-label">第二步 · 上赛道</div>
+      <div class="keypoint-text">在速度提上来的基础上，再去叠加长难句的结构拆解，最后拿真题去磨练题感。</div>
+    </div>
+    <p>听力发音、长难句结构、真题题感，<strong>这三块绝对不能割裂</strong>。底层能力一旦拔高，阅读的分数绝对是连带着一起涨的！</p>`,
+  '技巧型': `
+    <p>四六级阅读约占 35%。<strong>你的问题：文章看懂了、一做题掉干扰项。</strong>这是好信号——理解没大问题，缺的是<span class="hl">定位与逻辑判断方法</span>，见效最快的一类。</p>
+    <p>放在听力打通之后专项突破即可。<strong>技巧是锦上添花，地基仍是能力，别本末倒置。</strong></p>`,
+  '已较好': `
+    <p>阅读不是你的主要矛盾，按真题手感维护即可，<strong>省下精力压听力——回报最高的地方。</strong></p>`
+};
+
+/* ========== 第八章 写作翻译文案 ========== */
+const WRITING_TXT = {
+  '空白': `
+    <p>四六级写作翻译约占 30%。<strong>你的问题：中文逻辑都没有、半天憋不出一句。</strong></p>
+    <p>底层原因是你的英语"输入"太单薄了。语言学习有一个铁律：<span class="hl">一切的高质量输出，都必须建立在海量的输入之上。</span>你的听力和阅读（输入端）都还没彻底打通，脑子里没有积攒下地道的语料和句型，在考场上硬憋，能憋出来的只有干瘪的单词拼凑和纯正的"中式英语"。</p>
+    <div class="callout"><strong>所以，写作翻译的正确逆袭顺序是这样的：</strong>别上来就死背那些烂大街的万能模板！<strong>先把听读路径走通。</strong>当你在精听和阅读中，积累了足够多的素材，培养出了语感，脑子里"有货"了，这时候再去套用高级的结构模板，才能真正实现从"无话可说"到"下笔如有神"，从"写对"稳步跨越到"写得高级"！</div>`,
+  '中式': `
+    <p>四六级写作翻译约占 30%。<strong>你的问题：能写但全是初中词、语法错满篇。</strong>因为你背的仅仅是"被动词汇"（看阅读能认出来），而不是"主动词汇"（写作文能调取出来）。</p>
+    <p>记住一个铁律：<strong>所有的优质输出，都必须建立在扎实的输入之上。</strong>如果你前期的听力和阅读还没打通，脑子里没有地道的英语语感，这时候去硬背万能模板，写出来的东西就是一副空骨架，塞满了劣质塑料，<span class="hl">阅卷老师"一眼假"，给不了高分</span>。</p>
+    <p><strong>正确的节奏：</strong>必须是听读先走通，让地道的语感在脑子里扎根！有了这个底子，我们再在考前拿出一周的时间，用"高级模板 + 你的地道语料"进行集中套用和转化。</p>`,
+  '模板依赖': `
+    <p>四六级写作翻译约占 30%。你已懂框架，缺的是高级表达、像流水线产品。</p>
+    <p>怎么在这个阶段实现快速提分？<strong>秘诀不在于去背更多的模板，而在于把现有的模板变得更高级。</strong></p>
+    <p>但前提是你的听力和阅读输入已经到位了。因为高级的表达就是把你听读时积累的那些地道表达、高阶词汇调取出来，去替换掉模板里那些干瘪的初中词汇。<span class="hl">用有灵魂的内容，去填满机械的骨架。</span></p>
+    <div class="callout"><strong>永远记住一句话：</strong>模板只能帮你"保底"，让你不至于不及格；但真正能让你拿下高分的，是你平日里练出来的语言能力！</div>`,
+  '已较好': `
+    <p>写作翻译是你的强项，按真题维护、积累高分表达即可，<strong>重心放听力。</strong></p>`
+};
+
+/* ========== 第八章 方法注意文案 ========== */
+const METHOD_TXT = {
+  '刷题型': `
+    <p>你主要学习是靠刷题，但是在听力上，<strong>刷一百套题也练不出辨音</strong>，题只检测、不教方法。高中靠题量堆分，而四六级考综合能力，刷题主要是用在阅读冲刺和真题手感，靠刷题压中题型能勉强飘过，但那四六级证书背后的能力是空的，之后要是考研复试、外企面试就会原形毕露，所以<strong>只是刷题肯定是不行的，要注重系统学习</strong>。</p>`,
+  '碎片型': `
+    <p>你学得不少但<strong>全是零散的</strong>——短视频、不同 App、几集剧，互不衔接，努力无法叠加，等于每天从零。四六级提分靠体系的累积效应。<strong>碎片化换的是即时爽感不是能力</strong>，需要注意学习的系统性。</p>`,
+  '系统型': `
+    <p>你的方法本身健康——有体系、不碎片，比多数人强。所以问题主要在<strong>学习顺序和重心</strong>：先补哪块、按什么次序，决定你这段时间的产出，也决定你练出来的是应试还是能用一辈子的英语。</p>`,
+  '未起步': `
+    <p>你还没开始学习备考——<strong>这反而可以是最大的优势</strong>。多数人带着一身坏习惯来（疯狂刷题、死记单词、方法错误），要花大力气掰回来。你可以从第一天按正确的方法和节奏准备，<strong>避免走弯路</strong>。</p>`
+};
+
+/* ========== 第八章 路径（按时间档） ========== */
+const PATH_TXT = {
+  '长线': `
+    <p>① 先过发音体系打死地基；</p>
+    <p>② 接精听 + 跟读，听力整片松动、阅读速度同步起来；</p>
+    <p>③ 叠系统词汇 + 长难句（阅读直接受益）；</p>
+    <p>④ 真题 + 写作翻译专项冲。</p>
+    <p style="margin-top:14px;color:var(--forest);font-weight:600">能系统学习最好系统学习，避免碎片化。</p>`,
+  '中周期': `
+    <p>① 前 1/4 速通发音关键规律；</p>
+    <p>② 马上真题精听 + 跟读（听力 + 阅读一起带）；</p>
+    <p>③ 同步核心词汇 + 真题阅读；</p>
+    <p>④ 末段整套模考 + 写作模板。</p>`,
+  '极限抢分': `
+    <p style="color:var(--forest);font-weight:700;margin-bottom:14px">保过 / 保基本盘：</p>
+    <p>① 学习高频连读弱读等发音规律；</p>
+    <p>② 精力压真题听力精听 + 套刷（带阅读手感）；</p>
+    <p>③ 写作直接上模板保底。</p>
+    <p style="margin-top:14px;color:var(--forest);font-style:italic;font-weight:600">提醒：抢分是这次权宜，真本事回头还得补。</p>`
+};
+
+/* ========== 第八章 资料矩阵（24 组合） ========== */
+
+const M = (vocab, listening, reading, writing, exam) => ({
+  词汇基础: vocab,
+  听力发音: listening,
+  阅读板块: reading,
+  写作翻译: writing,
+  真题: exam === '四级' ? ['四级真题'] : ['六级真题']
+});
+
+const MATERIALS = {
+  /* === 四级 === */
+  '四级|极限抢分|D1': M(
+    ['26 年四级基础高频 200 词以内'],
+    ['26 年四级听力全攻略：技巧 + 真题 + 实操详解','26 年四六级听力常考同义替换总结','26 年四级听力高频场景词汇'],
+    ['26 年四级阅读全攻略','26 年四六级阅读高频同义替换词汇 300 组'],
+    ['四六级作文万能模版','四六级考试必备万能句型','26 年四六级翻译常考句型详解（含真题实例 + 常考原因）','四六级翻译救命表达'],
+    '四级'
+  ),
+  '四级|极限抢分|D2': M(
+    ['26 年四级核心 1000 词'],
+    ['26 年四级听力高频场景词汇','26 年四级听力全攻略：技巧 + 真题 + 实操详解','26 年四六级听力常考同义替换总结'],
+    ['26 年四级阅读全攻略','26 年四六级阅读高频同义替换词汇 300 组'],
+    ['四六级作文万能模版','四六级考试必备万能句型','四六级核心翻译 100 词','四六级写作核心 100 词'],
+    '四级'
+  ),
+  '四级|极限抢分|D3': M(
+    ['四六级高频 700 词'],
+    ['26 年四级听力全攻略：技巧 + 真题 + 实操详解','26 年四六级听力常考同义替换总结'],
+    ['26 年四级阅读全攻略','26 年四六级阅读高频同义替换词汇 300 组'],
+    ['26 年四六级写作高级词汇','26 年四六级翻译高级词汇','26 年四六级写作高级句型','26 年四六级翻译高级句型'],
+    '四级'
+  ),
+  '四级|极限抢分|D4': M(
+    ['四六级高频 700 词'],
+    ['26 年四级听力高阶技巧','26 年四六级听力常考同义替换总结'],
+    ['26 年四六级阅读高阶技巧','26 年四六级阅读高频同义替换词汇 300 组'],
+    ['26 年四六级写作高级词汇','26 年四六级翻译高级词汇','26 年四六级写作高级句型','26 年四六级翻译高级句型'],
+    '四级'
+  ),
+  '四级|中周期|D1': M(
+    ['四六级高频 700 词'],
+    ['26 年四级听力全攻略：技巧 + 真题 + 实操详解','26 年四六级听力常考同义替换总结'],
+    ['26 年四级阅读全攻略','26 年四六级阅读高频同义替换词汇 300 组'],
+    ['四六级作文万能模版','四六级考试必备万能句型','26 年四六级翻译常考句型详解（含真题实例 + 常考原因）','四六级翻译救命表达'],
+    '四级'
+  ),
+  '四级|中周期|D2': M(
+    ['26 年四级核心 1000 词'],
+    ['26 年四级听力高频场景词汇','26 年四级听力全攻略：技巧 + 真题 + 实操详解','26 年四六级听力常考同义替换总结'],
+    ['26 年四级阅读全攻略','26 年四六级阅读高频同义替换词汇 300 组'],
+    ['四六级作文万能模版','四六级考试必备万能句型','26 年四六级写作高级句型','26 年四六级翻译高级句型'],
+    '四级'
+  ),
+  '四级|中周期|D3': M(
+    ['四六级高频 1500 词'],
+    ['26 年四级听力全攻略：技巧 + 真题 + 实操详解','26 年四六级听力常考同义替换总结'],
+    ['26 年四级阅读全攻略','26 年四六级阅读高频同义替换词汇 300 组'],
+    ['26 年四六级写作高级词汇','26 年四六级翻译高级词汇','26 年四六级写作高级句型','26 年四六级翻译高级句型'],
+    '四级'
+  ),
+  '四级|中周期|D4': M(
+    ['四六级高频 700 词'],
+    ['26 年四级听力高阶技巧','26 年四六级听力常考同义替换总结'],
+    ['26 年四六级阅读高阶技巧','26 年四六级阅读高频同义替换词汇 300 组'],
+    ['26 年四六级写作高级词汇','26 年四六级翻译高级词汇','26 年四六级写作高级句型','26 年四六级翻译高级句型'],
+    '四级'
+  ),
+  '四级|长线|D1': M(
+    ['四六级核心 1500 词'],
+    ['26 年四级听力全攻略：技巧 + 真题 + 实操详解','26 年四六级听力常考同义替换总结'],
+    ['26 年四级阅读全攻略','26 年四六级阅读高频同义替换词汇 300 组'],
+    ['四六级作文万能模版','四六级考试必备万能句型','26 年四六级翻译常考句型详解（含真题实例 + 常考原因）','26 年四级翻译核心技巧'],
+    '四级'
+  ),
+  '四级|长线|D2': M(
+    ['26 年四级核心 1000 词'],
+    ['26 年四级听力全攻略：技巧 + 真题 + 实操详解','26 年四六级听力常考同义替换总结'],
+    ['26 年四级阅读全攻略','26 年四六级阅读高频同义替换词汇 300 组'],
+    ['四六级作文万能模版','四六级考试必备万能句型','26 年四六级写作高级句型','26 年四六级翻译高级句型','26 年四级翻译核心技巧'],
+    '四级'
+  ),
+  '四级|长线|D3': M(
+    ['四六级高频 1500 词'],
+    ['26 年四级听力全攻略：技巧 + 真题 + 实操详解','26 年四六级听力常考同义替换总结'],
+    ['26 年四级阅读全攻略','26 年四六级阅读高频同义替换词汇 300 组'],
+    ['26 年四六级写作高级词汇','26 年四六级翻译高级词汇','26 年四六级写作高级句型','26 年四六级翻译高级句型','26 年四级翻译核心技巧'],
+    '四级'
+  ),
+  '四级|长线|D4': M(
+    ['26 年四级核心 1000 词'],
+    ['26 年四级听力高阶技巧','26 年四六级听力常考同义替换总结'],
+    ['26 年四六级阅读高阶技巧','26 年四六级阅读高频同义替换词汇 300 组'],
+    ['26 年四六级写作高级词汇','26 年四六级翻译高级词汇','26 年四六级写作高级句型','26 年四六级翻译高级句型'],
+    '四级'
+  ),
+  /* === 六级 === */
+  '六级|极限抢分|D1': M(
+    ['四六级高频 700 词'],
+    ['26 年六级听力全攻略：技巧 + 真题 + 实操详解','26 年四六级听力常考同义替换总结'],
+    ['26 年六级阅读全攻略','26 年四六级阅读高频同义替换词汇 300 组'],
+    ['四六级作文万能模版','四六级考试必备万能句型','26 年四六级翻译常考句型详解（含真题实例 + 常考原因）','四六级翻译救命表达'],
+    '六级'
+  ),
+  '六级|极限抢分|D2': M(
+    ['四六级高频 700 词'],
+    ['26 年六级听力全攻略：技巧 + 真题 + 实操详解','26 年四六级听力常考同义替换总结'],
+    ['26 年六级阅读全攻略','26 年四六级阅读高频同义替换词汇 300 组'],
+    ['四六级作文万能模版','四六级考试必备万能句型','四六级核心翻译 100 词','四六级写作核心 100 词'],
+    '六级'
+  ),
+  '六级|极限抢分|D3': M(
+    ['四六级高频 700 词'],
+    ['26 年六级听力全攻略：技巧 + 真题 + 实操详解','26 年四六级听力常考同义替换总结'],
+    ['26 年六级阅读全攻略','26 年四六级阅读高频同义替换词汇 300 组'],
+    ['26 年四六级写作高级词汇','26 年四六级翻译高级词汇','26 年四六级写作高级句型','26 年四六级翻译高级句型'],
+    '六级'
+  ),
+  '六级|极限抢分|D4': M(
+    ['四六级高频 700 词'],
+    ['26 年六级听力高阶技巧','26 年四六级听力常考同义替换总结'],
+    ['26 年四六级阅读高阶技巧','26 年四六级阅读高频同义替换词汇 300 组'],
+    ['26 年四六级写作高级词汇','26 年四六级翻译高级词汇','26 年四六级写作高级句型','26 年四六级翻译高级句型'],
+    '六级'
+  ),
+  '六级|中周期|D1': M(
+    ['四六级高频 700 词'],
+    ['26 年六级听力全攻略：技巧 + 真题 + 实操详解','26 年四六级听力常考同义替换总结'],
+    ['26 年六级阅读全攻略','26 年四六级阅读高频同义替换词汇 300 组'],
+    ['四六级作文万能模版','四六级考试必备万能句型','26 年四六级翻译常考句型详解（含真题实例 + 常考原因）','四六级翻译救命表达'],
+    '六级'
+  ),
+  '六级|中周期|D2': M(
+    ['四六级核心 1500 词'],
+    ['26 年六级听力全攻略：技巧 + 真题 + 实操详解','26 年四六级听力常考同义替换总结'],
+    ['26 年六级阅读全攻略','26 年四六级阅读高频同义替换词汇 300 组'],
+    ['26 年四六级写作高级词汇','26 年四六级翻译高级词汇','26 年四六级写作高级句型','26 年四六级翻译高级句型'],
+    '六级'
+  ),
+  '六级|中周期|D3': M(
+    ['四六级高频 1500 词'],
+    ['26 年六级听力全攻略：技巧 + 真题 + 实操详解','26 年四六级听力常考同义替换总结'],
+    ['26 年六级阅读全攻略','26 年四六级阅读高频同义替换词汇 300 组'],
+    ['26 年四六级写作高级词汇','26 年四六级翻译高级词汇','26 年四六级写作高级句型','26 年四六级翻译高级句型'],
+    '六级'
+  ),
+  '六级|中周期|D4': M(
+    ['四六级高频 700 词'],
+    ['26 年六级听力高阶技巧','26 年四六级听力常考同义替换总结'],
+    ['26 年四六级阅读高阶技巧','26 年四六级阅读高频同义替换词汇 300 组'],
+    ['26 年四六级写作高级词汇','26 年四六级翻译高级词汇','26 年四六级写作高级句型','26 年四六级翻译高级句型'],
+    '六级'
+  ),
+  '六级|长线|D1': M(
+    ['四六级核心 1500 词'],
+    ['26 年六级听力全攻略：技巧 + 真题 + 实操详解','26 年四六级听力常考同义替换总结'],
+    ['26 年六级阅读全攻略','26 年四六级阅读高频同义替换词汇 300 组'],
+    ['四六级作文万能模版','四六级考试必备万能句型','26 年四六级翻译常考句型详解（含真题实例 + 常考原因）','26 年六级翻译核心技巧'],
+    '六级'
+  ),
+  '六级|长线|D2': M(
+    ['四六级核心 1500 词'],
+    ['26 年六级听力全攻略：技巧 + 真题 + 实操详解','26 年四六级听力常考同义替换总结'],
+    ['26 年六级阅读全攻略','26 年四六级阅读高频同义替换词汇 300 组'],
+    ['四六级作文万能模版','四六级考试必备万能句型','26 年四六级写作高级句型','26 年四六级翻译高级句型','26 年六级翻译核心技巧'],
+    '六级'
+  ),
+  '六级|长线|D3': M(
+    ['四六级高频 1500 词'],
+    ['26 年六级听力全攻略：技巧 + 真题 + 实操详解','26 年四六级听力常考同义替换总结'],
+    ['26 年六级阅读全攻略','26 年四六级阅读高频同义替换词汇 300 组'],
+    ['26 年四六级写作高级词汇','26 年四六级翻译高级词汇','26 年四六级写作高级句型','26 年四六级翻译高级句型','26 年四级翻译核心技巧'],
+    '六级'
+  ),
+  '六级|长线|D4': M(
+    ['四六级高频 1500 词'],
+    ['26 年六级听力高阶技巧','26 年四六级听力常考同义替换总结'],
+    ['26 年四六级阅读高阶技巧','26 年四六级阅读高频同义替换词汇 300 组'],
+    ['26 年四六级写作高级词汇','26 年四六级翻译高级词汇','26 年四六级写作高级句型','26 年四六级翻译高级句型'],
+    '六级'
+  )
+};
+
+/* ========== 第八章 嘱咐（4 选 1 随机） ========== */
+const CLOSINGS = [
+  `<p>最后这段请认真看完。你今天测出来的，不只是针对于四六级，而是<strong>你是否会用英语</strong>——这两件事是一件事：把发音听力这个地基打起来，四六级的分是它顺带带出来的；而你真正得到的，是一套出了考场还能用的英语能力。</p>
+   <p>举个常见对比：A 同学背模板、压题型飘过 425 拿到证，毕业面试外企被一句英文问到大脑空白，那证一点没帮上；B 同学按发音 → 听说读写老实练，四六级几乎裸考拿了高分，更重要的是他能直接看懂英文资料、面试用英语对答如流。</p>
+   <p>同样四年，差的不是运气，是一个练了能力、一个只换了张纸。所以别只盯那张证：<strong>把能力练出来，四六级的分和证书，是它顺手带给你的副产品。</strong></p>`,
+  `<p>最后这段话，是所有英语学习的终极底层逻辑，请务必看懂。</p>
+   <p>今天测试卡壳，并非只是跟四六级相关，而是精准诊断出你<strong>缺乏真实的英语运用能力</strong>。这是坏事，也是好事——因为解决这两者的路径是重合的。打通发音与听力体系，绝不仅仅是为了应付几道选择题。当语言的地基建好，四六级提分只是自然发生的结果；你真正收获的，是一张能通往更高职场阶梯的"永久通行证"。</p>
+   <p>职场是最残酷的试金石。「只图应试」的 A 同学：靠死记硬背和押题，侥幸踩线拿证。但在毕业面试或真正的跨国业务中，一句连读的英文就让他大脑宕机。「死磕能力」的 B 同学：遵循科学的发音 → 听说读写路径，不仅四六级高分过关，更具备了直接读取一手英文文献、在面试中用英语侃侃而谈的真实战力。</p>
+   <p>同样的时间投入，前者在自欺欺人，后者在构建核心壁垒。<strong>把英语能力练成肌肉记忆，四六级证书，不过是你能力溢出后的必然副产品。</strong></p>`,
+  `<p>最后这段话，可能会戳中很多人的痛处，但请你耐心看完。</p>
+   <p>今天测试暴露出来的问题，根本不是什么"你四六级注定考不过"，而是揭开了一个你一直不敢面对的真相——学了十几年，你依然不会"使用"英语，你只是在机械地"对付"英语。</p>
+   <p>很多同学之所以备考备得痛苦不堪、屡战屡败，就是因为陷入了"纯应试"的死循环：底层的发音听不懂、句子读不顺，却妄想靠背几套模板、记几个大招去考场上撞大运。<strong>这就像是在流沙上建高楼，建得越快，塌得越惨。</strong></p>
+   <p>停下这种无效的自我折磨。真正高效的考证路径，永远是"降维打击"。踏踏实实把发音、听读这些语言地基打通，当你耳朵能听清连读、眼睛能按意群扫视的时候，四六级卷子上的那些题，对你来说就只是水到渠成的常识判断。</p>
+   <p>更重要的是，证书只是证明你考过了一场试，但<strong>那套深植于你大脑里的英语能力，才是你未来真正能在职场和生活中拿得出手的硬通货。</strong>把能力练出来，那张四六级及格单，真的只是上天顺手塞给你的副产品。</p>`,
+  `<p>请务必把最后这段底层逻辑刻在脑子里。</p>
+   <p>今天的测试不只是跟四六级相关，而是要帮你撕掉"假性努力"的滤镜。你现在的卡顿，是因为你的<strong>"英语能力系统"根本没有建立起来。</strong></p>
+   <p>千万不要以为"提升能力"和"应试考证"是冲突的，或者觉得"提能力太慢，我只要技巧"。事实恰恰相反：脱离了底层能力的应试，才是最耗时、最痛苦、变数最大的。当你连最基本的连读弱读都听不出、长难句结构都看不懂时，你去背再多的技巧，考场上一紧张也会瞬间清零。</p>
+   <p>但如果你静下心，把发音和听读的地基打牢，你会发现——<strong>提升能力，才是最高效的备考捷径。</strong></p>
+   <p>当语言的底层逻辑通了，四六级不过是对你能力的一次"顺便抽查"。你不仅能极速、顺畅地拿下这张证书，更能带着这身真实的本事，自信地去面对毕业后的任何一场真刀真枪的考验。<strong>为了考证而考证，你最终可能什么都留不下；为了能力去学习提升，证书不请自来。</strong></p>`
+];
+
+/* ============================================================
+   状态机 & 逻辑
+   ============================================================ */
+const state = {
+  page: 'welcome',
+  qIndex: 0,
+  answers: {
+    Q1: null, Q2: null, Q3: null,
+    Q4_1: null, Q4_grade: null, Q4_grade_other: null, Q4_2: null,
+    Q5: [], Q6: [], Q7: [],
+    Q8: null,
+    Q9: []
+  }
+};
+
+const TARGET_LABEL = { 'pass': '过线 425 分', 'mid': '500–550+', 'high': '600+' };
+const GRADE_LABEL = { 'g1': '准大一', 'g2': '大二', 'g3': '大三', 'g4': '大四', 'other': '其他' };
+function gradeDisplay(a) {
+  if (a.Q4_grade === 'other') return a.Q4_grade_other || '其他';
+  return GRADE_LABEL[a.Q4_grade] || '—';
+}
+
+function computeTags(a) {
+  const exam = a.Q1 === 'cet4' ? '四级' : '六级';
+  // 时间档由精确天数自动推导
+  const days = a.Q3;
+  let time;
+  if (days < 45) time = '极限抢分';
+  else if (days <= 90) time = '中周期';
+  else time = '长线';
+  let base, baseFromQ42 = true;
+  if (a.Q4_2 && a.Q4_2 !== 'none') {
+    base = { 'lt380':'D1','380_425':'D2','425_500':'D3','gt500':'D4' }[a.Q4_2];
+  } else {
+    baseFromQ42 = false;
+    base = { 'lt90':'D1','90_115':'D2','115_135':'D3','gt135':'D4' }[a.Q4_1] || 'D2';
+  }
+
+  // 听力根因
+  let listening;
+  const Q5 = a.Q5, Q6 = a.Q6;
+  if (Q6.includes('ymmq') || Q6.includes('zsfy') || Q5.includes('jmth')) listening = '发音未建立';
+  else if (Q6.includes('dcnl')) listening = '辨音弱';
+  else if (Q5.includes('fyj') || Q5.includes('bmbx')) listening = '处理慢';
+  else listening = '已较好';
+
+  // 阅读短板
+  let reading;
+  const Q7 = a.Q7;
+  if (Q7.includes('hmq') || Q7.includes('qxkb')) reading = '词汇型';
+  else if (Q7.includes('gsfy')) reading = '速度型';
+  else if (Q7.includes('dwpc')) reading = '技巧型';
+  else reading = '已较好';
+
+  // 写作
+  const writing = { 'dnkb':'空白','chinglish':'中式','mb':'模板依赖','ideal':'已较好' }[a.Q8] || '中式';
+
+  // 方法
+  let method;
+  const Q9 = a.Q9;
+  if (Q9.includes('none')) method = '未起步';
+  else if (Q9.includes('sp')) method = '碎片型';
+  else if (Q9.includes('st') || Q9.includes('bdc')) method = '刷题型';
+  else if (Q9.includes('xt')) method = '系统型';
+  else method = '刷题型';
+
+  return { exam, time, base, baseFromQ42, listening, reading, writing, method };
+}
+
+function buildSubtitle(tags, a) {
+  // 片段 A
+  let A;
+  if (tags.listening !== '已较好') {
+    A = SUBA[tags.listening];
+  } else if (tags.reading === '词汇型') {
+    A = SUBA['阅读=词汇型'];
+  } else if (tags.reading === '速度型') {
+    A = SUBA['阅读=速度型'];
+  } else {
+    A = SUBA['听力已较好'];
+  }
+  // 片段 B
+  const B = SUBB[tags.method];
+  // 片段 C
+  const days = a.Q3;
+  let C;
+  const weak = (tags.base === 'D1' || tags.base === 'D2');
+  if (weak && (tags.time === '中周期' || tags.time === '长线')) {
+    C = `还有 ${days} 天，可以好好准备`;
+  } else if (tags.time === '极限抢分') {
+    C = `只剩 ${days} 天，要抢分`;
+  } else if (a.Q2 === 'mid' || a.Q2 === 'high') {
+    C = `离 ${TARGET_LABEL[a.Q2]} 就差临门一脚`;
+  } else {
+    C = `还有 ${days} 天，方法对效率和结果会更好`;
+  }
+  return { A, B, C };
+}
+
+function buildDiagnosis(tags, a) {
+  const timeDesc = TIME_DESC[tags.time];
+  const baseDesc = tags.baseFromQ42 ? BASE_DESC[tags.base].with : BASE_DESC[tags.base].without;
+  const verdict = BASE_VERDICT[tags.base];
+  const exam = tags.exam;
+
+  const locate = `你考的是${exam}，${timeDesc}，${baseDesc}——${verdict}。`;
+  const scan = GLOBAL_SCAN[exam];
+  const tone = TIME_TONE[tags.time];
+  const strategy = BASE_STRATEGY[tags.base];
+  return { locate, scan, tone, strategy, close: CLOSE_LINE };
+}
+
+/* ============================================================
+   渲染
+   ============================================================ */
+const view = () => document.getElementById('view');
+
+function render() {
+  if (state.page === 'welcome') return renderWelcome();
+  if (state.page === 'quiz')    return renderQuiz();
+  if (state.page === 'loading') return renderLoading();
+  if (state.page === 'report')  return renderReport();
+}
+
+function renderWelcome() {
+  view().innerHTML = `
+    <section class="welcome">
+      <div class="welcome-eyebrow fade-in stagger-1">几道选择题 · 约 2 分钟 · 个性化诊断报告</div>
+      <h1 class="welcome-title fade-in stagger-2">
+        不是再一次刷题，<br/>
+        是一次<em>诚实</em>的<br/>
+        英语能力体检。
+      </h1>
+      <p class="welcome-sub fade-in stagger-3">
+        你以为是单词没背够，其实是发音体系没建立；
+        你以为是阅读读不快，其实是听力的"意群"没打通。
+        这套测评不告诉你"应该多努力"，
+        而是告诉你<strong style="color:var(--ink)">你卡在哪、为什么、下一步该怎么走。</strong>
+      </p>
+      <button class="btn btn-arrow fade-in stagger-4" onclick="startQuiz()">开始测评</button>
+    </section>
+  `;
+}
+
+function renderQuiz() {
+  const q = QUESTIONS[state.qIndex];
+  const total = QUESTIONS.length;
+  const pct = ((state.qIndex) / total) * 100;
+  const isMulti  = q.type === 'multi';
+  const isNumber = q.type === 'number';
+  const answered = isAnswered(q);
+
+  view().innerHTML = `
+    <section class="quiz">
+      <div class="progress fade-in">
+        <span>Q ${String(state.qIndex+1).padStart(2,'0')} / ${String(total).padStart(2,'0')}</span>
+        <div class="progress-bar"><div class="progress-fill" style="transform: scaleX(${pct/100})"></div></div>
+      </div>
+      <div class="q-number fade-in stagger-1">Question ${state.qIndex+1}</div>
+      <h2 class="q-title fade-in stagger-2">${q.title}</h2>
+      ${isMulti ? '<div class="q-multi-hint fade-in stagger-2">' + (q.hint || '可多选') + '</div>' : ''}
+      ${isNumber ? renderNumberInput(q) : `
+        <div class="q-options fade-in stagger-3">
+          ${q.options.map((opt, i) => renderOption(q, opt, i)).join('')}
+        </div>
+      `}
+      <div class="q-nav fade-in stagger-4">
+        <button class="btn btn-ghost" ${state.qIndex===0?'disabled':''} onclick="prevQ()">← 上一题</button>
+        <button class="btn btn-arrow" ${answered?'':'disabled'} onclick="nextQ()">
+          ${state.qIndex===total-1 ? '生成报告' : '下一题'}
+        </button>
+      </div>
+    </section>
+  `;
+  // 数字题：自动聚焦
+  if (isNumber) {
+    const inp = document.querySelector('.q-number-input');
+    if (inp) inp.focus();
+  }
+}
+
+function renderNumberInput(q) {
+  const v = state.answers[q.id];
+  return `
+    <div class="fade-in stagger-3">
+      <div class="q-number-wrap">
+        <input type="number" class="q-number-input"
+          min="${q.min||1}" max="${q.max||365}"
+          placeholder="${q.placeholder||''}"
+          value="${v != null ? v : ''}"
+          oninput="setNumber('${q.id}', this.value)"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();const b=document.querySelector('.q-nav .btn-arrow');if(b&&!b.disabled)b.click();}" />
+        <span class="q-number-suffix">天</span>
+      </div>
+    </div>
+  `;
+}
+
+function setNumber(qid, value) {
+  const n = parseInt(value, 10);
+  state.answers[qid] = (isNaN(n) || n <= 0) ? null : Math.min(n, 365);
+  // 局部更新按钮可用性，避免重渲染丢焦点
+  const btn = document.querySelector('.q-nav .btn-arrow');
+  if (btn) {
+    if (state.answers[qid] && state.answers[qid] > 0) btn.removeAttribute('disabled');
+    else btn.setAttribute('disabled', '');
+  }
+}
+
+function renderOption(q, opt, i) {
+  const isMulti = q.type === 'multi';
+  const sel = isMulti ? state.answers[q.id].includes(opt.id) : state.answers[q.id] === opt.id;
+  const bulletClass = isMulti ? 'opt-bullet checkbox' : 'opt-bullet';
+  const desc = opt.desc ? ` <span style="color:var(--ink-3);">— ${opt.desc}</span>` : '';
+  let inputHtml = '';
+  if (opt.withInput) {
+    const v = (state.answers[q.id + '_other'] || '').replace(/"/g, '&quot;');
+    inputHtml = `
+      <div class="opt-input-wrap" id="optInputWrap" style="display:${sel ? 'block' : 'none'}">
+        <input type="text" class="opt-input" maxlength="40"
+          placeholder="${opt.inputPlaceholder || '请填写'}"
+          value="${v}"
+          oninput="setOtherText('${q.id}', this.value)" />
+      </div>
+    `;
+  }
+  return `
+    <label class="opt ${sel?'selected':''}" data-opt-id="${opt.id}" onclick="pick('${q.id}','${opt.id}',${isMulti},${opt.exclusive===true})">
+      <div class="opt-inner">
+        <div class="${bulletClass}"></div>
+        <div class="opt-text"><strong>${String.fromCharCode(65+i)}</strong>${opt.label}${desc}</div>
+      </div>
+    </label>
+    ${inputHtml}
+  `;
+}
+
+function setOtherText(qid, value) {
+  state.answers[qid + '_other'] = value.trim() ? value : null;
+  // 实时联动"下一题"按钮：选了"其他"必须填写才能继续
+  const q = QUESTIONS.find(x => x.id === qid);
+  const btn = document.querySelector('.q-nav .btn-arrow');
+  if (btn) {
+    if (isAnswered(q)) btn.removeAttribute('disabled');
+    else btn.setAttribute('disabled', '');
+  }
+}
+
+// 统一的"本题是否已作答"判断（含"其他"必填校验）
+function isAnswered(q) {
+  const ans = state.answers[q.id];
+  const isMulti  = q.type === 'multi';
+  const isNumber = q.type === 'number';
+  let base;
+  if (isMulti)       base = ans.length > 0;
+  else if (isNumber) base = typeof ans === 'number' && ans > 0;
+  else               base = ans !== null;
+  if (!base) return false;
+  // 若选中了带填空的选项（如"其他"），则必须填写内容
+  const inputOpt = q.options && q.options.find(o => o.withInput);
+  if (inputOpt) {
+    const selected = isMulti ? ans.includes(inputOpt.id) : ans === inputOpt.id;
+    const txt = state.answers[q.id + '_other'];
+    if (selected && !(txt && txt.trim())) return false;
+  }
+  return true;
+}
+
+function pick(qid, optId, isMulti, exclusive) {
+  if (!isMulti) {
+    state.answers[qid] = optId;
+  } else {
+    const arr = state.answers[qid];
+    if (exclusive) {
+      // 选了互斥项，清空其它
+      state.answers[qid] = arr.includes(optId) ? [] : [optId];
+    } else {
+      // 如果当前已有互斥项，先清空
+      const q = QUESTIONS.find(x => x.id === qid);
+      const hasExcl = arr.some(id => {
+        const o = q.options.find(o2 => o2.id === id);
+        return o && o.exclusive;
+      });
+      if (hasExcl) state.answers[qid] = [];
+      const idx = state.answers[qid].indexOf(optId);
+      if (idx === -1) state.answers[qid].push(optId);
+      else state.answers[qid].splice(idx, 1);
+    }
+  }
+  updateSelections(qid);
+}
+
+// 局部更新选项的高亮 & 下一题按钮的可用性，避免整页重渲染造成的闪屏
+function updateSelections(qid) {
+  const q = QUESTIONS.find(x => x.id === qid);
+  const isMulti = q.type === 'multi';
+  const ans = state.answers[qid];
+  document.querySelectorAll('.opt').forEach(el => {
+    const optId = el.dataset.optId;
+    const selected = isMulti ? ans.includes(optId) : ans === optId;
+    el.classList.toggle('selected', selected);
+  });
+  // "其他"填空框的显隐
+  const inputOpt = q.options && q.options.find(o => o.withInput);
+  if (inputOpt) {
+    const wrap = document.getElementById('optInputWrap');
+    if (wrap) {
+      const show = isMulti ? ans.includes(inputOpt.id) : ans === inputOpt.id;
+      wrap.style.display = show ? 'block' : 'none';
+      if (show) {
+        const inp = wrap.querySelector('input');
+        if (inp) inp.focus();
+      } else {
+        state.answers[qid + '_other'] = null; // 取消选其他时清空填空
+      }
+    }
+  }
+  const btn = document.querySelector('.q-nav .btn-arrow');
+  if (btn) {
+    if (isAnswered(q)) btn.removeAttribute('disabled');
+    else btn.setAttribute('disabled', '');
+  }
+}
+
+function startQuiz() {
+  state.page = 'quiz';
+  state.qIndex = 0;
+  render();
+}
+function prevQ() {
+  if (state.qIndex > 0) { state.qIndex--; renderQuiz(); }
+}
+function nextQ() {
+  if (state.qIndex < QUESTIONS.length - 1) {
+    state.qIndex++;
+    renderQuiz();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    state.page = 'loading';
+    renderLoading();
+    setTimeout(() => {
+      state.page = 'report';
+      renderReport();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 1800);
+  }
+}
+
+function renderLoading() {
+  const steps = [
+    '比对 24 种人物画像中…',
+    '诊断听力、阅读、写作三大根因…',
+    '匹配你的提分路径与资料…',
+    '生成最终个性化报告…'
+  ];
+  view().innerHTML = `
+    <section class="loading">
+      <div class="loading-inner">
+        <div class="loading-mark"></div>
+        <h2 class="loading-title">正在生成你的诊断报告</h2>
+        <div class="loading-step" id="loadStep">${steps[0]}</div>
+      </div>
+    </section>
+  `;
+  let i = 0;
+  const el = document.getElementById('loadStep');
+  const t = setInterval(() => {
+    i++;
+    if (!el || i >= steps.length) { clearInterval(t); return; }
+    el.style.opacity = 0;
+    setTimeout(() => { el.textContent = steps[i]; el.style.opacity = 1; }, 200);
+  }, 420);
+}
+
+function renderReport() {
+  const tags = computeTags(state.answers);
+  const sub = buildSubtitle(tags, state.answers);
+  const dx  = buildDiagnosis(tags, state.answers);
+  const persona = PERSONA[`${tags.exam}|${tags.time}|${tags.base}`];
+  const matKey = `${tags.exam}|${tags.time}|${tags.base}`;
+  const mat = MATERIALS[matKey];
+  const closing = CLOSINGS[Math.floor(Math.random() * CLOSINGS.length)];
+  const days = state.answers.Q3;
+
+  view().innerHTML = `
+    <section class="report">
+      <!-- 头部 -->
+      <header class="report-header fade-in">
+        <div class="report-tag">个性化诊断报告</div>
+        <h1 class="persona-name">${persona}</h1>
+        <p class="persona-subtitle">${sub.A}，${sub.B}，${sub.C}</p>
+        <div class="report-stats">
+          <div class="stat-item"><span class="stat-label">Exam</span><span class="stat-value">${tags.exam}</span></div>
+          <div class="stat-item"><span class="stat-label">Time</span><span class="stat-value">${tags.time}</span></div>
+          <div class="stat-item"><span class="stat-label">年级</span><span class="stat-value">${gradeDisplay(state.answers)}</span></div>
+          <div class="stat-item"><span class="stat-label">听力根因</span><span class="stat-value accent">${tags.listening}</span></div>
+          <div class="stat-item"><span class="stat-label">阅读短板</span><span class="stat-value accent">${tags.reading}</span></div>
+          <div class="stat-item"><span class="stat-label">写作档</span><span class="stat-value accent">${tags.writing}</span></div>
+          <div class="stat-item"><span class="stat-label">方法</span><span class="stat-value accent">${tags.method}</span></div>
+        </div>
+      </header>
+
+      <!-- ① 面诊 -->
+      <article class="section is-headline fade-in stagger-1">
+        <div class="section-num">① 当前面诊</div>
+        <h2 class="section-title">${dx.locate}</h2>
+        <p>${dx.scan}</p>
+        <p>${dx.tone}</p>
+        <p>${dx.strategy}</p>
+        <p style="color:var(--ink);font-weight:500">${dx.close}</p>
+      </article>
+
+      <!-- ② 听力 -->
+      <article class="section fade-in stagger-2">
+        <div class="section-num">② 听力板块</div>
+        <h2 class="section-title">${tags.listening}</h2>
+        ${LISTENING_TXT[tags.listening]}
+      </article>
+
+      <!-- ③ 阅读 -->
+      <article class="section fade-in stagger-3">
+        <div class="section-num">③ 阅读板块</div>
+        <h2 class="section-title">${tags.reading}</h2>
+        ${READING_TXT[tags.reading]}
+      </article>
+
+      <!-- ④ 写作翻译 -->
+      <article class="section fade-in stagger-4">
+        <div class="section-num">④ 写作翻译板块</div>
+        <h2 class="section-title">${tags.writing}</h2>
+        ${WRITING_TXT[tags.writing]}
+      </article>
+
+      <!-- ⑤ 注意（方法） -->
+      <article class="section fade-in stagger-5">
+        <div class="section-num">⑤ 注意</div>
+        <h2 class="section-title">${tags.method}</h2>
+        ${METHOD_TXT[tags.method]}
+      </article>
+
+      <!-- ⑥ 路径 -->
+      <article class="section fade-in stagger-6">
+        <div class="section-num">⑥ 提分路径</div>
+        <h2 class="section-title">按 ${tags.time} · ${days} 天来排</h2>
+        <div class="path-block">
+          <div class="path-steps">${PATH_TXT[tags.time]}</div>
+        </div>
+      </article>
+
+      <!-- ⑦ 资料包 -->
+      <article class="section fade-in stagger-7">
+        <div class="section-num">⑦ 资料包</div>
+        <h2 class="section-title">为你匹配的资料</h2>
+        <div class="material-list">
+          <div class="material-prefix">根据你的基础和备考时间，这套资料可以参考使用，但<strong>资料技巧只是辅助工具，绝非万能钥匙</strong>。所有资料技巧的运用都建立在扎实的基础知识之上，<strong>脱离基础的技巧，只会让我们陷入"懂技巧但做不对题目"的困境</strong>。</div>
+          ${renderMaterial('词汇基础', mat.词汇基础)}
+          ${renderMaterial('听力发音', mat.听力发音)}
+          ${renderMaterial('阅读板块', mat.阅读板块)}
+          ${renderMaterial('写作翻译', mat.写作翻译)}
+          ${renderMaterial('真题',     mat.真题)}
+          <div class="material-cta">
+            <div class="material-cta-text">以上资料如有需要 — <strong>可以找我领取</strong></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- ⑧ 嘱咐 -->
+      <article class="section fade-in stagger-8">
+        <div class="section-num">⑧ 最后嘱咐</div>
+        <h2 class="section-title">把能力练出来，证书是顺手的</h2>
+        <div class="closing">
+          <span class="closing-quote">"</span>
+          ${closing}
+        </div>
+      </article>
+
+      <footer class="report-footer">
+        <button class="btn" onclick="restart()">重新测评</button>
+        <button class="btn btn-ghost" onclick="window.print()">保存为 PDF</button>
+        <div class="report-footer-meta">CET ASSESSMENT v2.0 · GENERATED · ${new Date().toLocaleDateString('zh-CN')}</div>
+      </footer>
+    </section>
+  `;
+}
+
+function renderMaterial(name, items) {
+  return `
+    <div class="material-group">
+      <div class="material-group-title">${name}</div>
+      <div class="material-items">${items.map(it => `《${it}》`).join(' ')}</div>
+    </div>
+  `;
+}
+
+/* ============================================================
+   联系方式配置 —— 只改这里就行（三种方式，填哪个用哪个，按顺序优先）
+   ============================================================ */
+// ① 微信链接（最推荐，点了直接拉起微信开始对话）
+//    可用「微信客服链接」如 https://work.weixin.qq.com/kfid/kfcxxxxxxx
+//    或「公众号/视频号/个人名片」分享链接
+const WECHAT_URL = '';
+// ② 微信二维码图片（没有链接就用这个，点了弹窗显示二维码让学生扫码加）
+//    把二维码图片和 index.html 放同一目录，这里填文件名，如 'wechat-qr.png'
+const WECHAT_QR  = '';
+// ③ 微信号（实在没有上面两个，就填微信号，点了自动复制并提示去微信添加）
+const WECHAT_ID  = '';
+
+function contactTeacher() {
+  if (WECHAT_URL) { window.location.href = WECHAT_URL; return; }
+  if (WECHAT_QR)  { showWechatQR(WECHAT_QR); return; }
+  if (WECHAT_ID) {
+    const tip = '老师微信号：' + WECHAT_ID + '\n请打开微信 →「添加朋友」→ 粘贴搜索添加';
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(WECHAT_ID).then(
+        () => alert('已复制老师微信号：' + WECHAT_ID + '\n打开微信「添加朋友」粘贴即可'),
+        () => alert(tip)
+      );
+    } else { alert(tip); }
+    return;
+  }
+  alert('还没配置联系方式。\n请在 index.html 顶部填写 WECHAT_URL / WECHAT_QR / WECHAT_ID 任一项。');
+}
+
+function showWechatQR(src) {
+  let modal = document.getElementById('wechatModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'wechatModal';
+    modal.className = 'wechat-modal';
+    modal.innerHTML =
+      '<div class="wechat-modal-card">' +
+        '<button class="wechat-modal-close" aria-label="关闭" onclick="closeWechatQR()">×</button>' +
+        '<div class="wechat-modal-title">扫码加老师微信</div>' +
+        '<img src="' + src + '" alt="老师微信二维码" class="wechat-modal-qr" />' +
+        '<div class="wechat-modal-hint">长按图片保存，或用微信「扫一扫」</div>' +
+      '</div>';
+    modal.onclick = (e) => { if (e.target === modal) closeWechatQR(); };
+    document.body.appendChild(modal);
+  }
+  modal.style.display = 'flex';
+}
+function closeWechatQR() {
+  const m = document.getElementById('wechatModal');
+  if (m) m.style.display = 'none';
+}
+
+function restart() {
+  state.page = 'welcome';
+  state.qIndex = 0;
+  Object.keys(state.answers).forEach(k => {
+    state.answers[k] = Array.isArray(state.answers[k]) ? [] : null;
+  });
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// 启动
+render();
+</script>
+<script>
+const BIN_CONFIG = {
+  apiKey: "$2a$10$Vf9CxUWuIQLpCeH1UqmjEuf.c3d6sTsNSwXLBqHarGiEd5/lT1bKq",
+  binId: "6a3267c9da38895dfecf1c3f",
+  baseUrl: "https://api.jsonbin.io/v3/b"
+};
+const LOCAL_STORAGE_KEY = "cet_assessment_submissions";
+let lastSubmissionKey = null;
+function readLocalSubmissions() {
+  try {
+    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+    const data = raw ? JSON.parse(raw) : [];
+    return Array.isArray(data) ? data : [];
+  } catch (err) {
+    console.error("readLocalSubmissions", err);
+    return [];
+  }
+}
+function writeLocalSubmissions(rows) {
+  try {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(rows));
+  } catch (err) {
+    console.error("writeLocalSubmissions", err);
+  }
+}
+function buildSubmissionPayload() {
+  return {
+    submittedAt: new Date().toISOString(),
+    Q1: state.answers.Q1,
+    Q2: state.answers.Q2,
+    Q3: state.answers.Q3,
+    Q4_1: state.answers.Q4_1,
+    Q4_grade: state.answers.Q4_grade,
+    Q4_grade_other: state.answers.Q4_grade_other,
+    Q4_2: state.answers.Q4_2,
+    Q5: Array.isArray(state.answers.Q5) ? [...state.answers.Q5] : [],
+    Q6: Array.isArray(state.answers.Q6) ? [...state.answers.Q6] : [],
+    Q7: Array.isArray(state.answers.Q7) ? [...state.answers.Q7] : [],
+    Q8: state.answers.Q8,
+    Q9: Array.isArray(state.answers.Q9) ? [...state.answers.Q9] : []
+  };
+}
+async function fetchBinDataset() {
+  const resp = await fetch(`${BIN_CONFIG.baseUrl}/${BIN_CONFIG.binId}/latest`, {
+    method: 'GET',
+    headers: { 'X-Master-Key': BIN_CONFIG.apiKey, 'X-Bin-Meta': 'false' }
+  });
+  if (!resp.ok) throw new Error(`Read failed: ${resp.status}`);
+  const data = await resp.json();
+  return data && typeof data === 'object' ? data : {};
+}
+async function saveCurrentSubmission() {
+  const payload = buildSubmissionPayload();
+  const submissionKey = JSON.stringify(payload);
+  if (submissionKey === lastSubmissionKey) return;
+  lastSubmissionKey = submissionKey;
+  const localRows = readLocalSubmissions();
+  localRows.push(payload);
+  writeLocalSubmissions(localRows);
+  try {
+    const current = await fetchBinDataset();
+    const submissions = Array.isArray(current.submissions) ? current.submissions.slice() : [];
+    submissions.push(payload);
+    const resp = await fetch(`${BIN_CONFIG.baseUrl}/${BIN_CONFIG.binId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': BIN_CONFIG.apiKey,
+        'X-Bin-Name': 'cet-assessment-dataset'
+      },
+      body: JSON.stringify({ version: 1, title: 'cet-assessment-dataset', updatedAt: new Date().toISOString(), submissions })
+    });
+    if (!resp.ok) throw new Error(`Write failed: ${resp.status}`);
+  } catch (err) {
+    console.error('saveCurrentSubmission', err);
+  }
+}
+const codexOriginalRenderReport = renderReport;
+renderReport = function() { codexOriginalRenderReport(); saveCurrentSubmission(); };
+const codexOriginalRestart = restart;
+restart = function() { lastSubmissionKey = null; codexOriginalRestart(); };
+</script>
+</body>
+</html>
